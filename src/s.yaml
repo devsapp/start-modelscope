@@ -1,0 +1,91 @@
+edition: 1.0.0
+name: modelscope-app
+# access是当前应用所需要的密钥信息配置：
+# 密钥配置请参见：https://www.serverless-devs.com/serverless-devs/command/config
+# 密钥使用请参见：https://www.serverless-devs.com/serverless-devs/tool
+access: {{ access }}
+
+vars: # 全局变量
+  region: {{ region }}
+  service:
+    name: "modelscope_service"
+    description: "test for app deploy"
+    internetAccess: true
+    role: {{ roleArn }}
+    vpcConfig: auto
+    nasConfig: auto
+
+services:
+  model_download_func:
+    component: 'fc'
+    actions:
+      post-deploy:
+        - component: fc invoke
+    props:
+      region: ${vars.region}
+      service: ${vars.service}
+      function:
+        name: model_download_fun
+        description: test modelscope deploy
+        handler: index.handler
+        timeout: 86400
+        memorySize: 2048
+        instanceType: e1
+        instanceConcurrency: 1
+        runtime: python3.9
+        codeUri: ./model_download
+        environmentVariables:
+          MODEL_ID: {{ modelId }}
+          MODEL_VERSION: {{ modelRevision }}
+          MODELSCOPE_CACHE: /mnt/auto
+  
+  tgpu_basic_func:
+    component: fc
+    props:
+      region: ${vars.region}
+      service: ${vars.service}
+      function:
+        name: model_app_func
+        description: Deploy ModelScope applications of model {{ modelId }}
+        handler: not-used
+        timeout: 600
+        caPort: 9000
+        # 业务可根据实际显存占用，选择合适的GPU实例规格；如下例子展示1/8 GPU虚拟化规格
+        {{ if gpuMemorySize < 16*1024 }} 
+        instanceType: fc.gpu.tesla.1
+        {{ else if gpuMemorySize > 16*1024 && gpuMemorySize < 24*1024 }}
+        instanceType: fc.gpu.ampere.1
+        {{ else }}
+        instanceType: 'No support now.'
+        {{/if}}
+        gpuMemorySize: {{ gpuMemorySize }}
+        cpu: 2
+        memorySize: {{ memorySize }}
+        diskSize: 512
+        instanceConcurrency: 1
+        runtime: custom-container
+        customContainerConfig:
+          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:fc-deploy-common-v1
+          accelerationType: Default
+        environmentVariables:
+          MODEL_ID: {{ modelId }}
+          MODEL_VERSION: {{ modelRevision }}
+          MODELSCOPE_CACHE: /mnt/auto
+          TASK: {{ task }}
+
+      triggers:
+        - name: httpTrigger
+          type: http
+          config:
+            authType: anonymous
+            methods:
+              - GET
+              - POST
+              - PUT
+
+      # customDomains:
+      #   - domainName: auto
+      #     protocol: HTTP
+      #     routeConfigs:
+      #       - path: '/*'
+      
