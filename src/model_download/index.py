@@ -6,7 +6,7 @@ def handler(event, context):
     model_id = os.getenv('MODEL_ID', '')
     revision = os.getenv('MODEL_VERSION', '')
     cache_dir = os.getenv('MODELSCOPE_CACHE', '')
-    sdk_token = '4d56b836-926e-47ad-83e9-f28cf7777f54'
+    sdk_token = os.getenv('MODELSCOPE_TOKEN', '')
     # login first.
     HubApi().login(sdk_token)
     if len(revision) > 0:

@@ -8,7 +8,7 @@ access: {{ access }}
 vars: # 全局变量
   region: {{ region }}
   service:
-    name: "modelscope_service"
+    name: {{ serviceName }}
     description: "test for app deploy"
     internetAccess: true
     role: {{ roleArn }}
@@ -25,7 +25,7 @@ services:
       region: ${vars.region}
       service: ${vars.service}
       function:
-        name: model_download_fun
+        name: model_download_func
         description: test modelscope deploy
         handler: index.handler
         timeout: 86400
@@ -38,6 +38,7 @@ services:
           MODEL_ID: {{ modelId }}
           MODEL_VERSION: {{ modelRevision }}
           MODELSCOPE_CACHE: /mnt/auto
+          MODELSCOPE_TOKEN: {{ accessToken }}
   
   tgpu_basic_func:
     component: fc
