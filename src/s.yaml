@@ -52,7 +52,7 @@ services:
         timeout: 600
         caPort: 9000
         # 业务可根据实际显存占用，选择合适的GPU实例规格；如下例子展示1/8 GPU虚拟化规格
-        {{ if gpuMemorySize < 16*1024 }} 
+        {{ if gpuMemorySize <= 16*1024 }} 
         instanceType: fc.gpu.tesla.1
         {{ else if gpuMemorySize > 16*1024 && gpuMemorySize < 24*1024 }}
         instanceType: fc.gpu.ampere.1
