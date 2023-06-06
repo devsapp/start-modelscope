@@ -40,7 +40,7 @@ services:
           MODELSCOPE_CACHE: /mnt/auto
           MODELSCOPE_TOKEN: {{ accessToken }}
   
-  model_app_func:
+  tgpu_basic_func:
     component: 'fc'
     props:
       region: ${vars.region}
