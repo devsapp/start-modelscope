@@ -9,7 +9,7 @@ vars: # 全局变量
   region: {{ region }}
   service:
     name: {{ serviceName }}
-    description: "test for app deploy"
+    description: "modelscope deployment"
     internetAccess: true
     role: {{ roleArn }}
     vpcConfig: auto
@@ -26,7 +26,7 @@ services:
       service: ${vars.service}
       function:
         name: model_download_func
-        description: test modelscope deploy
+        description: initialize model into nas storage
         handler: index.handler
         timeout: 86400
         memorySize: 2048
@@ -41,7 +41,7 @@ services:
           MODELSCOPE_TOKEN: {{ accessToken }}
   
   tgpu_basic_func:
-    component: fc
+    component: 'fc'
     props:
       region: ${vars.region}
       service: ${vars.service}
@@ -54,20 +54,18 @@ services:
         # 业务可根据实际显存占用，选择合适的GPU实例规格；如下例子展示1/8 GPU虚拟化规格
         {{ if gpuMemorySize <= 16*1024 }} 
         instanceType: fc.gpu.tesla.1
-        {{ else if gpuMemorySize > 16*1024 && gpuMemorySize < 24*1024 }}
+        {{ else if gpuMemorySize > 16*1024 && gpuMemorySize <= 24*1024 }}
         instanceType: fc.gpu.ampere.1
         {{ else }}
         instanceType: 'No support now.'
         {{/if}}
         gpuMemorySize: {{ gpuMemorySize }}
-        cpu: 2
         memorySize: {{ memorySize }}
         diskSize: 512
         instanceConcurrency: 1
         runtime: custom-container
         customContainerConfig:
           image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:fc-deploy-common-v2
-          accelerationType: Default
         environmentVariables:
           MODEL_ID: {{ modelId }}
           MODEL_VERSION: {{ modelRevision }}
@@ -89,4 +87,3 @@ services:
       #     protocol: HTTP
       #     routeConfigs:
       #       - path: '/*'
-      
