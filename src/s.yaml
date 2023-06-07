@@ -61,6 +61,7 @@ services:
         {{/if}}
         gpuMemorySize: {{ gpuMemorySize }}
         memorySize: {{ memorySize }}
+        cpu: 2
         diskSize: 512
         instanceConcurrency: 1
         runtime: custom-container
