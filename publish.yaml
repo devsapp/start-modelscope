@@ -44,12 +44,12 @@ Parameters:
     region:
       title: 地域
       type: string
-      default: cn-hangzhou
+      default: cn-shanghai
       description: 创建应用所在的地区
       enum:
         # - cn-beijing
         - cn-hangzhou
-        # - cn-shanghai
+        - cn-shanghai
     serviceName:
       title: 服务名
       type: string
