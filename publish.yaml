@@ -91,6 +91,14 @@ Parameters:
       type: secret
       default: ''
       description: ModelScope的访问令牌（SDK令牌），从https://modelscope.cn/my/myaccesstoken获取
+    gpuInstanceType:
+      title: GPU实例类型
+      type: string
+      default: "fc.gpu.tesla.1"
+      description: GPU实例类型
+      enum:
+        - "fc.gpu.tesla.1"
+        - "fc.gpu.ampere.1"
     gpuMemorySize:
       title: 显存大小
       type: string

@@ -51,14 +51,7 @@ services:
         handler: not-used
         timeout: 600
         caPort: 9000
-        # 业务可根据实际显存占用，选择合适的GPU实例规格；如下例子展示1/8 GPU虚拟化规格
-        {{ if gpuMemorySize <= 16*1024 }} 
-        instanceType: fc.gpu.tesla.1
-        {{ else if gpuMemorySize > 16*1024 && gpuMemorySize <= 24*1024 }}
-        instanceType: fc.gpu.ampere.1
-        {{ else }}
-        instanceType: 'No support now.'
-        {{/if}}
+        instanceType: {{ gpuInstanceType }}
         gpuMemorySize: {{ gpuMemorySize }}
         memorySize: {{ memorySize }}
         cpu: 2
@@ -66,7 +59,7 @@ services:
         instanceConcurrency: 1
         runtime: custom-container
         customContainerConfig:
-          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:fc-deploy-common-v2
+          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:fc-deploy-common-v3
         environmentVariables:
           MODEL_ID: {{ modelId }}
           MODEL_VERSION: {{ modelRevision }}
