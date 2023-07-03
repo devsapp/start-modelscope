@@ -59,11 +59,12 @@ services:
         instanceConcurrency: 1
         runtime: custom-container
         customContainerConfig:
-          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:fc-deploy-common-v2
+          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:fc-deploy-common-v4
         environmentVariables:
           MODEL_ID: {{ modelId }}
           MODEL_VERSION: {{ modelRevision }}
           MODELSCOPE_CACHE: /mnt/auto
+          MODELSCOPE_TOKEN: {{ accessToken }}
           TASK: {{ task }}
 
       triggers:
