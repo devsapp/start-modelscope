@@ -8,7 +8,7 @@ def handler(event, context):
     cache_dir = os.getenv('MODELSCOPE_CACHE', '')
     sdk_token = os.getenv('MODELSCOPE_TOKEN', '')
     # login first.
-    # HubApi().login(sdk_token)
+    HubApi().login(sdk_token)
     if len(revision) > 0:
         snapshot_download (model_id =model_id, 
                            revision =revision,
