@@ -11,11 +11,12 @@ from typing import Dict, Optional, Union
 import requests
 from requests.adapters import Retry
 from tqdm import tqdm
-
+from concurrent.futures import ThreadPoolExecutor
 from modelscope import __version__
 from modelscope.hub.api import HubApi, ModelScopeConfig
 from modelscope.hub.constants import (API_FILE_DOWNLOAD_CHUNK_SIZE,
-                                      API_FILE_DOWNLOAD_RETRY_TIMES,
+                                      API_FILE_DOWNLOAD_RETRY_TIMES,MODELSCOPE_DOWNLOAD_PARALLELS,
+                                    MODELSCOPE_PARALLEL_DOWNLOAD_THRESHOLD_MB,
                                       API_FILE_DOWNLOAD_TIMEOUT, FILE_HASH)
 from modelscope.utils.constant import DEFAULT_MODEL_REVISION
 from modelscope.utils.logger import get_logger
@@ -177,6 +178,65 @@ def get_file_download_url(model_id: str, file_path: str, revision: str):
         revision=revision,
         file_path=file_path,
     )
+
+def download_part(params):
+    # unpack parameters
+    progress, start, end, url, file_name, cookies, headers = params
+    get_headers = {} if headers is None else copy.deepcopy(headers)
+    get_headers['Range'] = 'bytes=%s-%s' % (start, end)
+    with open(file_name, 'rb+') as f:
+        f.seek(start)
+        r = requests.get(
+            url,
+            stream=True,
+            headers=get_headers,
+            cookies=cookies,
+            timeout=API_FILE_DOWNLOAD_TIMEOUT)
+        for chunk in r.iter_content(chunk_size=API_FILE_DOWNLOAD_CHUNK_SIZE):
+            if chunk:  # filter out keep-alive new chunks
+                f.write(chunk)
+                progress.update(len(chunk))
+
+
+def parallel_download(
+    url: str,
+    local_dir: str,
+    file_name: str,
+    cookies: CookieJar,
+    headers: Optional[Dict[str, str]] = None,
+    file_size: int = None,
+):
+    # create temp file
+    temp_file_manager = partial(
+        tempfile.NamedTemporaryFile, mode='wb', dir=local_dir, delete=False)
+    with temp_file_manager() as temp_file:
+        progress = tqdm(
+            unit='B',
+            unit_scale=True,
+            unit_divisor=1024,
+            total=file_size,
+            initial=0,
+            desc='Downloading',
+        )
+        PART_SIZE = 160 * 1024 * 1024  # every part is 160M
+        tasks = []
+        for idx in range(int(file_size / PART_SIZE)):
+            start = idx * PART_SIZE
+            end = (idx + 1) * PART_SIZE - 1
+            tasks.append(
+                (progress, start, end, url, temp_file.name, cookies, headers))
+        if end + 1 < file_size:
+            tasks.append((progress, end + 1, file_size - 1, url,
+                          temp_file.name, cookies, headers))
+        parallels = 20
+        with ThreadPoolExecutor(
+                max_workers=parallels,
+                thread_name_prefix='download') as executor:
+            list(executor.map(download_part, tasks))
+
+        progress.close()
+
+    os.replace(temp_file.name, os.path.join(local_dir, file_name))
 
 
 def http_get_file(
