@@ -11,7 +11,7 @@ Type: Application
 Name: start-modelscope
 Provider:
   - 阿里云 
-Version: 0.2.0
+Version: 0.2.1
 Description: ModelScope应用
 HomePage: https://github.com/devsapp/start-modelscope
 Tags:
@@ -115,8 +115,9 @@ Parameters:
     modelCache:
       title: 模型缓存
       type: string
-      default: "modelsce-mirror-modelsce-mirror-txpzbgwcck.cn-hangzhou-vpc.fcapp.run"
+      default: "www.modelscope.cn"
       description: 魔塔模型FC缓存下载地址
       enum:
+        - "www.modelscope.cn"
         - "modelsce-mirror-modelsce-mirror-txpzbgwcck.cn-hangzhou-vpc.fcapp.run"
         - "modelsce-mirror-modelsce-mirror-txpzbgwcck.cn-shanghai-vpc.fcapp.run"
