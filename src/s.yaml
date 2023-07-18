@@ -29,7 +29,9 @@ services:
         description: initialize model into nas storage
         handler: index.handler
         timeout: 86400
-        memorySize: 2048
+        memorySize: 16384
+        cpu: 8
+        diskSize: 10240
         instanceType: e1
         instanceConcurrency: 1
         runtime: python3.9
@@ -39,6 +41,7 @@ services:
           MODEL_VERSION: {{ modelRevision }}
           MODELSCOPE_CACHE: /mnt/auto
           MODELSCOPE_TOKEN: {{ accessToken }}
+          MODELSCOPE_DOMAIN: {{ modelCache }}
   
   tgpu_basic_func:
     component: 'fc'
@@ -49,7 +52,7 @@ services:
         name: model_app_func
         description: Deploy ModelScope applications of model {{ modelId }}
         handler: not-used
-        timeout: 600
+        timeout: 1800
         caPort: 9000
         instanceType: {{ gpuInstanceType }}
         gpuMemorySize: {{ gpuMemorySize }}
