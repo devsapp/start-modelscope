@@ -60,6 +60,8 @@ services:
         cpu: 2
         diskSize: 512
         instanceConcurrency: 1
+        initializer: 'true'
+        initializationTimeout: 300
         runtime: custom-container
         customContainerConfig:
           image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:fc-deploy-common-v11
