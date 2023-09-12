@@ -87,3 +87,48 @@ services:
       #     protocol: HTTP
       #     routeConfigs:
       #       - path: '/*'
+
+  model_ui_func:
+    component: 'fc'
+    props:
+      region: ${vars.region}
+      service: ${vars.service}
+      function:
+        name: model_ui_func
+        description: model ui web page
+        memorySize: 1024
+        instanceType: e1
+        runtime: custom.debian10
+        codeUri: ./model_ui
+        handler: index.handler
+        caPort: 7860
+        timeout: 600
+        instanceConcurrency: 100
+        environmentVariables:
+          MODEL_ID: {{ modelId }}
+          MODEL_VERSION: {{ modelRevision }}
+          TASK: {{ task }}
+          PATH: /opt/python3.9/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
+          PYTHONPATH: /opt/python
+          API_URL: ${tgpu_basic_func.output.url.system_url}
+        customRuntimeConfig:
+          command:
+            - python3.9
+          args:
+            - "app.py"
+        layers:
+          - acs:fc:${vars.region}:official:layers/Python39/versions/2
+          - acs:fc:${vars.region}:1431999136518149:layers/Python39-Gradio/versions/1
+      triggers:
+        - name: http_t
+          type: http
+          config:
+            authType: anonymous
+            methods:
+              - GET
+              - POST
+      customDomains:
+        - domainName: auto
+          protocol: HTTP
+          routeConfigs:
+            - path: /*
