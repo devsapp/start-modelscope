@@ -68,6 +68,9 @@ def snapshot_download(model_id: str,
         cache_dir = get_cache_dir()
     if isinstance(cache_dir, Path):
         cache_dir = str(cache_dir)
+    if revision is not None:
+        cache_dir = os.path.join(cache_dir, revision)
+
     temporary_cache_dir = os.path.join(cache_dir, 'temp')
     os.makedirs(temporary_cache_dir, exist_ok=True)
 
