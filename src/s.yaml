@@ -54,7 +54,11 @@ services:
         handler: not-used
         timeout: 1800
         caPort: 9000
-        instanceType: e1
+        instanceType: g1
+        gpuMemorySize: 16384
+        memorySize: 32768
+        cpu: 8
+        diskSize: 512
         instanceConcurrency: 1
         runtime: custom-container
         customContainerConfig:
