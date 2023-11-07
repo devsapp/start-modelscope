@@ -322,7 +322,7 @@ def text_to_video_synthesis_setup():
 
 def default_setup():
     def default_callback():
-        return "invalid model task@dev@robinsonnie-kernel"
+        return "invalid model task"
 
     return gr.Interface(fn=default_callback, inputs=None, outputs="text", title="404", description="invalid model task")
 
