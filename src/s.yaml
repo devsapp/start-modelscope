@@ -42,7 +42,36 @@ services:
           MODELSCOPE_CACHE: /mnt/auto
           MODELSCOPE_TOKEN: {{ accessToken }}
           MODELSCOPE_DOMAIN: {{ modelCache }}
-  
+
+  model_meta_func:
+    component: 'fc'
+    props:
+      region: ${vars.region}
+      service: ${vars.service}
+      function:
+        name: model_meta_func
+        description: Meta Api
+        handler: not-used
+        timeout: 1800
+        caPort: 9000
+        instanceType: g1
+        gpuMemorySize: 16384
+        memorySize: 32768
+        cpu: 8
+        diskSize: 512
+        instanceConcurrency: 1
+        runtime: custom-container
+        customContainerConfig:
+          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:fc-deploy-common-v16
+
+      triggers:
+        - name: httpTrigger
+          type: http
+          config:
+            authType: anonymous
+            methods:
+              - GET
+
   tgpu_basic_func:
     component: 'fc'
     props:
@@ -64,7 +93,7 @@ services:
         initializationTimeout: 300
         runtime: custom-container
         customContainerConfig:
-          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:fc-deploy-common-v15-1
+          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:fc-deploy-common-v16
         environmentVariables:
           MODEL_ID: {{ modelId }}
           MODEL_VERSION: {{ modelRevision }}
