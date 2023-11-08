@@ -7,6 +7,7 @@ access: {{ access }}
 
 vars: # 全局变量
   region: {{ region }}
+  version: dev
   service:
     name: {{ serviceName }}
     description: "modelscope deployment"
@@ -62,7 +63,7 @@ services:
         instanceConcurrency: 1
         runtime: custom-container
         customContainerConfig:
-          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:fc-deploy-common-v16
+          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
 
       triggers:
         - name: httpTrigger
@@ -93,7 +94,7 @@ services:
         initializationTimeout: 300
         runtime: custom-container
         customContainerConfig:
-          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:fc-deploy-common-v16
+          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
         environmentVariables:
           MODEL_ID: {{ modelId }}
           MODEL_VERSION: {{ modelRevision }}
