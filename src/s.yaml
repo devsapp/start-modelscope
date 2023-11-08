@@ -7,7 +7,7 @@ access: {{ access }}
 
 vars: # 全局变量
   region: {{ region }}
-  version: dev
+  version: fc-deploy-common-v16
   service:
     name: {{ serviceName }}
     description: "modelscope deployment"
