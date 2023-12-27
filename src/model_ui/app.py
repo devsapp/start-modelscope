@@ -235,18 +235,26 @@ def chat_setup():
             raise gr.Error("Missing necessary input message, please retry.")
         if history == None:
             history = []
-        payload = {"input": {"text": message, "history": history}}
+        print("history:", history)
+        messages = []
+        for talk in history:
+            talk_u = {"content":talk[0],"role":"user"}
+            talk_a = {"content":talk[1],"role":"assistant"}
+            messages.append(talk_u)
+            messages.append(talk_a)
+        messages.append({"content":message,"role":"user"})
+        payload = {"input":{"messages":messages}, "parameters":{"do_sample":True,"max_length":1024}}
+        print("payload:", payload)
         response = post_request(api_url, json=payload)
         print("response:", response.json())
+        response = response.json()
 
         # Compatible with different LLMs
         output = ""
-        if "response" in response.json()["Data"]:
-            output = response.json()["Data"]["response"]
-        elif "text" in response.json()["Data"]:
-            output = response.json()["Data"]["text"]
+        if response["Code"] != 200:
+            output = "[internal error] Errmsg: " + response["Message"] + " RequestId: " + response["RequestId"]
         else:
-            output = "[internal error] not found output."
+            output = response["Data"]["message"]["content"]
 
         return output
 
@@ -258,7 +266,6 @@ def chat_setup():
         gr.Markdown(article)
 
     return demo
-
 
     #with gr.Blocks() as demo:
     #    chatbot = gr.Chatbot()
