@@ -1,4 +1,4 @@
-edition: 1.0.0
+edition: 3.0.0
 name: modelscope-app
 # access是当前应用所需要的密钥信息配置：
 # 密钥配置请参见：https://www.serverless-devs.com/serverless-devs/command/config
@@ -8,157 +8,181 @@ access: {{ access }}
 vars: # 全局变量
   region: {{ region }}
   version: fc-deploy-common-v17
-  service:
-    name: {{ serviceName }}
-    description: "modelscope deployment"
-    internetAccess: true
-    role: {{ roleArn }}
-    vpcConfig: auto
-    nasConfig: auto
+  name: {{ name }}
+  role: {{ roleArn }}
+  gpuInstanceType: {{ gpuInstanceType }}
+  gpuMemorySize: {{ gpuMemorySize }}
+  memorySize: {{ memorySize }}
+  modelID: {{ modelId }}
+  modelRevision: {{ modelRevision }}
+  modelTask: {{ modelTask }}
+  modelAccessToken: {{ accessToken }}
+  modelCache: modelsce-mirror-modelsce-mirror-txpzbgwcck.${vars.region}-vpc.fcapp.run
 
-services:
+resources:
   model_download_func:
-    component: 'fc'
+    component: 'fc3'
     actions:
-      post-deploy:
-        - component: fc invoke
+      complete-deploy:
+        - component: fc3 invoke
     props:
       region: ${vars.region}
-      service: ${vars.service}
-      function:
-        name: model_download_func
-        description: initialize model into nas storage
-        handler: index.handler
-        timeout: 86400
-        memorySize: 16384
-        cpu: 8
-        diskSize: 10240
-        instanceType: e1
-        instanceConcurrency: 1
-        runtime: python3.9
-        codeUri: ./model_download
-        environmentVariables:
-          MODEL_ID: {{ modelId }}
-          MODEL_VERSION: {{ modelRevision }}
-          MODELSCOPE_CACHE: /mnt/auto
-          MODELSCOPE_TOKEN: {{ accessToken }}
-          MODELSCOPE_DOMAIN: {{ modelCache }}
+      role: ${vars.role}
+      functionName: ${vars.name}-model-download-func
+      description: initialize model into nas storage
+      handler: index.handler
+      timeout: 86400
+      memorySize: 16384
+      cpu: 8
+      diskSize: 10240
+      instanceType: e1
+      instanceConcurrency: 1
+      runtime: python3.9
+      code: ./model_download
+      internetAccess: true
+      vpcConfig: auto
+      nasConfig: auto
+      environmentVariables:
+        MODEL_ID: ${vars.modelID}
+        MODEL_VERSION: ${vars.modelRevision}
+        MODELSCOPE_CACHE: /mnt/auto
+        MODELSCOPE_TOKEN: ${vars.modelAccessToken}
+        MODELSCOPE_DOMAIN: ${vars.modelCache}
 
   model_meta_func:
-    component: 'fc'
+    component: 'fc3'
     props:
       region: ${vars.region}
-      service: ${vars.service}
-      function:
-        name: model_meta_func
-        description: Meta Api
-        handler: not-used
-        timeout: 1800
-        caPort: 9000
-        instanceType: g1
+      role: ${vars.role}
+      functionName: ${vars.name}-model-meta-func
+      description: Meta Api
+      handler: not-used
+      timeout: 1800
+      memorySize: 32768
+      cpu: 8
+      diskSize: 512
+      gpuConfig:
         gpuMemorySize: 16384
-        memorySize: 32768
-        cpu: 8
-        diskSize: 512
-        instanceConcurrency: 1
-        runtime: custom-container
-        customContainerConfig:
-          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-
+        gpuType: fc.gpu.tesla.1
+      instanceConcurrency: 1
+      runtime: custom-container
+      internetAccess: true
+      customContainerConfig:
+        image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
+        port: 9000
       triggers:
-        - name: httpTrigger
-          type: http
-          config:
+        - triggerName: httpTrigger
+          triggerType: http
+          description: 'httpTriggerMeta'
+          qualifier: LATEST
+          triggerConfig:
             authType: anonymous
+            disableURLInternet: false
             methods:
               - GET
 
   tgpu_basic_func:
-    component: 'fc'
+    component: 'fc3'
     props:
       region: ${vars.region}
-      service: ${vars.service}
-      function:
-        name: model_app_func
-        description: Deploy ModelScope applications of model {{ modelId }}
-        handler: not-used
-        timeout: 1800
-        caPort: 9000
-        instanceType: {{ gpuInstanceType }}
-        gpuMemorySize: {{ gpuMemorySize }}
-        memorySize: {{ memorySize }}
-        cpu: 2
-        diskSize: 512
-        instanceConcurrency: 1
-        initializer: 'true'
-        initializationTimeout: 300
-        runtime: custom-container
-        customContainerConfig:
-          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-        environmentVariables:
-          MODEL_ID: {{ modelId }}
-          MODEL_VERSION: {{ modelRevision }}
-          MODELSCOPE_CACHE: /mnt/auto
-          MODELSCOPE_TOKEN: {{ accessToken }}
-          TASK: {{ task }}
-
+      role: ${vars.role}
+      functionName: ${vars.name}-model-app-func
+      description: Deploy ModelScope applications of model
+      handler: not-used
+      timeout: 1800
+      memorySize: ${vars.memorySize}
+      cpu: 2
+      diskSize: 512
+      gpuConfig:
+        gpuMemorySize: ${vars.gpuMemorySize}
+        gpuType: ${vars.gpuInstanceType}
+      instanceConcurrency: 1
+      runtime: custom-container
+      initializer: 'true'
+      initializationTimeout: 300
+      internetAccess: true
+      vpcConfig: auto
+      nasConfig: auto
+      customContainerConfig:
+        image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
+        port: 9000
+      environmentVariables:
+        MODEL_ID: ${vars.modelID}
+        MODEL_VERSION: ${vars.modelRevision}
+        MODELSCOPE_CACHE: /mnt/auto
+        MODELSCOPE_TOKEN: ${vars.modelAccessToken}
+        TASK: ${vars.modelTask}
       triggers:
-        - name: httpTrigger
-          type: http
-          config:
+        - triggerName: httpTrigger
+          triggerType: http
+          description: 'httpTriggerModel'
+          qualifier: LATEST
+          triggerConfig:
             authType: anonymous
+            disableURLInternet: false
             methods:
               - GET
               - POST
               - PUT
 
-      # customDomains:
-      #   - domainName: auto
-      #     protocol: HTTP
-      #     routeConfigs:
-      #       - path: '/*'
-
   model_ui_func:
-    component: 'fc'
+    component: 'fc3'
     props:
       region: ${vars.region}
-      service: ${vars.service}
-      function:
-        name: model_ui_func
-        description: model ui web page
-        memorySize: 1024
-        instanceType: e1
-        runtime: custom.debian10
-        codeUri: ./model_ui
-        handler: index.handler
-        caPort: 7860
-        timeout: 600
-        instanceConcurrency: 100
-        environmentVariables:
-          MODEL_ID: {{ modelId }}
-          MODEL_VERSION: {{ modelRevision }}
-          TASK: {{ task }}
-          PATH: /opt/python3.9/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
-          PYTHONPATH: /opt/python
-          API_URL: ${tgpu_basic_func.output.url.system_url}
-        customRuntimeConfig:
-          command:
-            - python3.9
-          args:
-            - "app.py"
-        layers:
-          - acs:fc:${vars.region}:official:layers/Python39/versions/2
-          - acs:fc:${vars.region}:1431999136518149:layers/Python39-Gradio/versions/1
+      role: ${vars.role}
+      functionName: ${vars.name}-model-ui-func
+      description: model ui web page
+      handler: index.handler
+      timeout: 600
+      memorySize: 1024
+      instanceType: e1
+      runtime: custom.debian10
+      code: ./model_ui
+      instanceConcurrency: 100
+      internetAccess: true
+      environmentVariables:
+        MODEL_ID: ${vars.modelID}
+        MODEL_VERSION: ${vars.modelRevision}
+        TASK: ${vars.modelTask}
+        PATH: /opt/python3.9/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
+        PYTHONPATH: /opt/python
+        API_URL: ${resources.tgpu_basic_func.output.url.system_url}
+      customRuntimeConfig:
+        command:
+          - python3.9
+        args:
+          - "app.py"
+        port: 7860
+      layers:
+        - acs:fc:${vars.region}:official:layers/Python39/versions/2
+        - acs:fc:${vars.region}:1431999136518149:layers/Python39-Gradio/versions/1
       triggers:
-        - name: http_t
-          type: http
-          config:
+        - triggerName: httpTrigger
+          triggerType: http
+          description: 'httpTriggerUI'
+          qualifier: LATEST
+          triggerConfig:
             authType: anonymous
+            disableURLInternet: false
             methods:
               - GET
               - POST
-      customDomains:
-        - domainName: auto
-          protocol: HTTP
-          routeConfigs:
-            - path: /*
+              - PUT
+
+  model_ui_func_domain:
+    component: 'fc3-domain'
+    props:
+      region: ${vars.region}
+      domainName: auto
+      protocol: HTTP
+      routeConfig:
+        routes:
+          - functionName: ${resources.model_ui_func.props.functionName}
+            methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            path: /*
+            qualifier: LATEST
