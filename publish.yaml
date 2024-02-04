@@ -7,13 +7,16 @@
 #   - [社区讨论 #407](https://github.com/Serverless-Devs/Serverless-Devs/discussions/407);
 #   - [社区讨论 #439](https://github.com/Serverless-Devs/Serverless-Devs/discussions/439);
 
-Type: Application
+Edition: 3.0.0
+Type: Project
 Name: start-modelscope-v3
 Provider:
   - 阿里云 
-Version: 0.0.2
+Version: 0.0.3
 Description: ModelScope应用(fc3.0)
 HomePage: https://github.com/devsapp/start-modelscope-v3
+Organization: 阿里云函数计算（FC）
+Effective: Public
 Tags:
   - AIGC
   - 大模型
@@ -22,10 +25,10 @@ Service:
   函数计算:
     Authorities:
       - AliyunFCFullAccess
-  NAS:
+  硬盘挂载:
     Authorities:
       - AliyunNASFullAccess
-  VPC:
+  专有网络:
     Authorities:
       - AliyunVPCFullAccess
 Parameters:
