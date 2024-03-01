@@ -7,7 +7,7 @@ access: {{ access }}
 
 vars: # 全局变量
   region: {{ region }}
-  version: fc-deploy-common-v17
+  version: fc-deploy-common-v17.3.3
   name: {{ name }}
   role: {{ roleArn }}
   gpuInstanceType: {{ gpuInstanceType }}
