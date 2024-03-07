@@ -59,7 +59,7 @@ resources:
       environmentVariables:
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
-        MODELSCOPE_CACHE: /mnt/${resources.model_cache.output.functionName}
+        MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         MODELSCOPE_DOMAIN: ${vars.modelCache}
 
@@ -85,7 +85,7 @@ resources:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
         port: 9000
       environmentVariables:
-        MODELSCOPE_CACHE: /mnt/${resources.model_cache.output.functionName}
+        MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}
       triggers:
         - triggerName: httpTrigger
           triggerType: http
@@ -125,7 +125,7 @@ resources:
       environmentVariables:
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
-        MODELSCOPE_CACHE: /mnt/${resources.model_cache.output.functionName}
+        MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         TASK: ${vars.modelTask}
       triggers:
