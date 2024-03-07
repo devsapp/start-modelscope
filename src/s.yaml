@@ -7,7 +7,7 @@ access: {{ access }}
 
 vars: # 全局变量
   region: {{ region }}
-  version: fc-deploy-common-v17.3.3
+  version: fc-deploy-common-v17.3.4
   name: {{ name }}
   role: {{ roleArn }}
   gpuInstanceType: {{ gpuInstanceType }}
@@ -20,6 +20,20 @@ vars: # 全局变量
   modelCache: modelsce-mirror-modelsce-mirror-txpzbgwcck.${vars.region}-vpc.fcapp.run
 
 resources:
+  model_cache:
+    component: 'fc3'
+    props:
+      region: ${vars.region}
+      role: ${vars.role}
+      functionName: ${vars.name}-model-cache
+      description: modelscope model cache helper, dont' invoke
+      handler: index.handler
+      instanceType: e1
+      runtime: python3.9
+      code: ./model_cache
+      vpcConfig: auto
+      nasConfig: auto
+
   model_download_func:
     component: 'fc3'
     actions:
@@ -40,12 +54,12 @@ resources:
       runtime: python3.9
       code: ./model_download
       internetAccess: true
-      vpcConfig: auto
-      nasConfig: auto
+      vpcConfig: ${resources.model_cache.output.vpcConfig}
+      nasConfig: ${resources.model_cache.output.nasConfig}
       environmentVariables:
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
-        MODELSCOPE_CACHE: /mnt/auto
+        MODELSCOPE_CACHE: /mnt/${resources.model_cache.output.functionName}
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         MODELSCOPE_DOMAIN: ${vars.modelCache}
 
@@ -70,6 +84,8 @@ resources:
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
         port: 9000
+      environmentVariables:
+        MODELSCOPE_CACHE: /mnt/${resources.model_cache.output.functionName}
       triggers:
         - triggerName: httpTrigger
           triggerType: http
@@ -101,15 +117,15 @@ resources:
       initializer: 'true'
       initializationTimeout: 300
       internetAccess: true
-      vpcConfig: auto
-      nasConfig: auto
+      vpcConfig: ${resources.model_cache.output.vpcConfig}
+      nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
         port: 9000
       environmentVariables:
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
-        MODELSCOPE_CACHE: /mnt/auto
+        MODELSCOPE_CACHE: /mnt/${resources.model_cache.output.functionName}
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         TASK: ${vars.modelTask}
       triggers:
