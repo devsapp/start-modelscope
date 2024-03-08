@@ -34,7 +34,7 @@ release-dev:
 	npm run publish
 
 update-version:
-	current_version=$$(curl -s https://api.devsapp.cn/v3/packages/fc3/release/latest | jq -r '.body.tag_name'); \
+	current_version=$$(curl -s https://api.devsapp.cn/v3/packages/start-modelscope-v3/release/latest | jq -r '.body.tag_name'); \
 	echo $$current_version;\
 	major_version=$$(echo $$current_version | cut -d"." -f1); \
 	minor_version=$$(echo $$current_version | cut -d"." -f2); \
