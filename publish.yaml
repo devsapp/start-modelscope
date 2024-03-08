@@ -29,6 +29,7 @@ Service:
   VPC:
     Authorities:
       - AliyunVPCFullAccess
+Effective: Public
 Parameters:
   type: object
   additionalProperties: false
