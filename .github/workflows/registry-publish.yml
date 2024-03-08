@@ -25,9 +25,7 @@ jobs:
       - name: install s
         run: |
           npm i @serverless-devs/s@v3 -g
-          s -v
-          cat src/s.yaml
-      - name: s registry login
+      - name: s registry login & publish
         run: |
           s registry login --token ${{ secrets.alibaba_registry_v3_publish_token }}
           s registry publish
