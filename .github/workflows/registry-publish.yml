@@ -30,4 +30,5 @@ jobs:
           s cli registry login --token ${{ secrets.alibaba_registry_v3_publish_token }}
       - name: release prod
         run: |
+          s cli registry login --token ${{ secrets.alibaba_registry_v3_publish_token }}
           s cli registry publish
