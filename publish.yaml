@@ -22,13 +22,13 @@ Category: 人工智能
 Service:
   函数计算:
     Authorities:
-      - AliyunFCFullAccess
+      - 创建函数
   NAS:
     Authorities:
-      - AliyunNASFullAccess
+      - 创建NAS
   VPC:
     Authorities:
-      - AliyunVPCFullAccess
+      - 创建VPC
 Effective: Public
 Parameters:
   type: object
