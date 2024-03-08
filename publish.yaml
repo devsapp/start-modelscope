@@ -20,16 +20,10 @@ Tags:
   - 大模型
 Category: 人工智能
 Organization: 阿里云函数计算（FC）
-#Service:
-#  函数计算:
-#    Authorities:
-#      - 创建函数
-#  NAS:
-#    Authorities:
-#      - 创建NAS
-#  VPC:
-#    Authorities:
-#      - 创建VPC
+Service:
+  函数计算:
+    Authorities:
+      - 创建函数
 Effective: Public
 Parameters:
   type: object
