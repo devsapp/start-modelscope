@@ -19,16 +19,17 @@ Tags:
   - AIGC
   - 大模型
 Category: 人工智能
-Service:
-  函数计算:
-    Authorities:
-      - 创建函数
-  NAS:
-    Authorities:
-      - 创建NAS
-  VPC:
-    Authorities:
-      - 创建VPC
+Organization: 阿里云函数计算（FC）
+#Service:
+#  函数计算:
+#    Authorities:
+#      - 创建函数
+#  NAS:
+#    Authorities:
+#      - 创建NAS
+#  VPC:
+#    Authorities:
+#      - 创建VPC
 Effective: Public
 Parameters:
   type: object
