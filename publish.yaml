@@ -8,7 +8,7 @@
 #   - [社区讨论 #439](https://github.com/Serverless-Devs/Serverless-Devs/discussions/439);
 
 Edition: 3.0.0
-Type: Application
+Type: Project
 Name: start-modelscope-v3
 Provider:
   - 阿里云 
