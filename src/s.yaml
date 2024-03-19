@@ -39,7 +39,7 @@ resources:
     actions:
       complete-deploy:
         - run: sleep 30    # wait nas ready
-        - component: fc3 invoke
+        - component: fc3@0.0.23 invoke
     props:
       region: ${vars.region}
       role: ${vars.role}
