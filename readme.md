@@ -1,5 +1,5 @@
 
-> 注：当前项目为 Serverless Devs 应用，由于应用中会存在需要初始化才可运行的变量（例如应用部署地区、服务名、函数名等等），所以**不推荐**直接 Clone 本仓库到本地进行部署或直接复制 s.yaml 使用，**强烈推荐**通过 `s init ` 的方法或应用中心进行初始化，详情可参考[部署 & 体验](#部署--体验) 。
+> 注：当前项目为 Serverless Devs 应用，由于应用中会存在需要初始化才可运行的变量（例如应用部署地区、函数名等等），所以**不推荐**直接 Clone 本仓库到本地进行部署或直接复制 s.yaml 使用，**强烈推荐**通过 `s init ${模版名称}` 的方法或应用中心进行初始化，详情可参考[部署 & 体验](#部署--体验) 。
 
 # start-modelscope-v3 帮助文档
 <p align="center" class="flex justify-center">
@@ -16,7 +16,7 @@
 
 <description>
 
-ModelScope应用
+ModelScope应用(fc3.0)
 
 </description>
 
@@ -34,29 +34,17 @@ ModelScope应用
 
 ## 前期准备
 
-使用该项目，您需要有开通以下服务：
+使用该项目，您需要有开通以下服务并拥有对应权限：
 
 <service>
 
-| 服务 |  备注  |
-| --- |  --- |
-| 函数计算 FC |  下载并加载模型 |
-| 文件存储 NAS |  存储模型，加快模型启动速度 |
+
+
+| 服务/业务 |  权限  | 相关文档 |
+| --- |  --- | --- |
+| 函数计算 |  创建函数 | [帮助文档](https://help.aliyun.com/product/2508973.html) [计费文档](https://help.aliyun.com/document_detail/2512928.html) |
 
 </service>
-
-推荐您拥有以下的产品权限 / 策略：
-<auth>
-
-
-
-| 服务/业务 |  权限 |  备注  |
-| --- |  --- |   --- |
-| 函数计算 | AliyunFCFullAccess |  需要创建函数资源，通过函数下载及加载模型 |
-| NAS | AliyunNASFullAccess |  先将模型从公网下载到NAS，应用启动时加载NAS上的模型使用 |
-| VPC | AliyunVPCFullAccess |  使用NAS需要同时使用VPC |
-
-</auth>
 
 <remark>
 
@@ -83,20 +71,31 @@ ModelScope应用
     
 - 通过 [Serverless Devs Cli](https://www.serverless-devs.com/serverless-devs/install) 进行部署：
   - [安装 Serverless Devs Cli 开发者工具](https://www.serverless-devs.com/serverless-devs/install) ，并进行[授权信息配置](https://docs.serverless-devs.com/fc/config) ；
-  - 初始化项目：`s init start-modelscope-v3 -d start-modelscope-v3 `
-  - 进入项目，并进行项目部署：`cd start-modelscope-v3 && s deploy - y`
+  - 初始化项目：`s init start-modelscope-v3 -d start-modelscope-v3`
+  - 进入项目，并进行项目部署：`cd start-modelscope-v3 && s deploy -y`
    
 </deploy>
 
-## 应用详情
+## 案例介绍
 
 <appdetail id="flushContent">
+
+魔搭一键部署模型至FC
+
 </appdetail>
 
-## 使用文档
+## 使用流程
 
 <usedetail id="flushContent">
+
+[ModelScope一键部署模型：新手村实操FAQ篇](https://developer.aliyun.com/article/1307460?spm=5176.28261954.J_7341193060.1.43f42fdewvfTyq&scm=20140722.S_community@@%E6%96%87%E7%AB%A0@@1307460._.ID_1307460-RL_%E9%AD%94%E6%90%AD%20%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2-LOC_search~UND~community~UND~item-OR_ser-V_3-P0_0)
+
 </usedetail>
+
+## 注意事项
+
+<matters id="flushContent">
+</matters>
 
 
 <devgroup>
