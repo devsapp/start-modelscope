@@ -23,7 +23,7 @@ Organization: 阿里云函数计算（FC）
 Service:
   函数计算:
     Authorities:
-      - 创建函数
+      - AliyunFCFullAccess
 Effective: Public
 Parameters:
   type: object
