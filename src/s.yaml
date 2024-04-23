@@ -126,7 +126,7 @@ resources:
       environmentVariables:
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
-        MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}
+        MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}/
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         TASK: ${vars.modelTask}
       triggers:
