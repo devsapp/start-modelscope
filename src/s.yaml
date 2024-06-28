@@ -7,7 +7,7 @@ access: {{ access }}
 
 vars: # 全局变量
   region: {{ region }}
-  version: fc-deploy-common-v17.3.3
+  version: 2024-06-27-8531bd
   service:
     name: {{ serviceName }}
     description: "modelscope deployment"
@@ -63,7 +63,7 @@ services:
         instanceConcurrency: 1
         runtime: custom-container
         customContainerConfig:
-          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
+          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/swingdeploy:${vars.version}
 
       triggers:
         - name: httpTrigger
