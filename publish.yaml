@@ -33,6 +33,7 @@ Parameters:
   additionalProperties: false
   required: # 必填项
     - region
+    - imageTag
     - serviceName
     - roleArn
     - modelId
@@ -41,6 +42,10 @@ Parameters:
     - gpuMemorySize
     - memorySize
     - modelCache
+    - ggufFile
+    - modelfile
+    - modelFamily
+    - servedModelName
   properties:
     region:
       title: 地域
@@ -51,6 +56,11 @@ Parameters:
         # - cn-beijing
         - cn-hangzhou
         - cn-shanghai
+    imageTag:
+      title: modelscope镜像tag
+      type: string
+      default: fc-deploy-common-v17.3.3
+      description: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope镜像的tag版本。24年7月以后，与modelscope镜像统一
     serviceName:
       title: 服务名
       type: string
@@ -121,3 +131,23 @@ Parameters:
         - "www.modelscope.cn"
         - "modelsce-mirror-modelsce-mirror-txpzbgwcck.cn-hangzhou-vpc.fcapp.run"
         - "modelsce-mirror-modelsce-mirror-txpzbgwcck.cn-shanghai-vpc.fcapp.run"
+    ggufFile:
+      title: gguf文件
+      type: string
+      default: ""
+      description: gguf格式的模型文件，使用ollama启动时为必须参数
+    modelfile:
+      title: ollama模型template文件内容
+      type: string
+      default: ""
+      description: ollama创建模型时所需的模型template文件的内容, 不配置时将以modelFamily取该类模型的默认配置
+    modelFamily:
+      title: 模型family
+      type: string
+      default: ""
+      description: 模型的类型，如qwen2, 用以获取ollama创建模型时所需的模型默认template文件
+    servedModelName:
+      title: 模型服务名
+      type: string
+      pattern: "^[a-zA-Z_][a-zA-Z0-9-_]{0,127}$"
+      description: 用户可配置的部署后模型名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间

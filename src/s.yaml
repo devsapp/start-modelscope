@@ -7,7 +7,7 @@ access: {{ access }}
 
 vars: # 全局变量
   region: {{ region }}
-  version: 2024-06-27-8531bd
+  version: {{ imageTag }}
   service:
     name: {{ serviceName }}
     description: "modelscope deployment"
@@ -43,6 +43,10 @@ services:
           MODELSCOPE_CACHE: /mnt/auto
           MODELSCOPE_TOKEN: {{ accessToken }}
           MODELSCOPE_DOMAIN: {{ modelCache }}
+          IMAGE_TAG: {{ imageTag }}
+          GGUF_FILE: {{ ggufFile }}
+          MODELFLE: {{ modelfile }}
+          MODEL_FAMILY: {{ modelFamily }}
 
   model_meta_func:
     component: 'fc'
@@ -52,7 +56,8 @@ services:
       function:
         name: model_meta_func
         description: Meta Api
-        handler: not-used
+        codeUri: ./model_meta_info
+        handler: {{ if imageTag == 'fc-deploy-common-v17.3.3' }}not-used{{ else }}index.handler
         timeout: 1800
         caPort: 9000
         instanceType: g1
@@ -63,8 +68,9 @@ services:
         instanceConcurrency: 1
         runtime: custom-container
         customContainerConfig:
-          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/swingdeploy:${vars.version}
-
+          image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
+        environmentVariables:
+          SERVED_MODEL_NAME: {{ servedModelName }}
       triggers:
         - name: httpTrigger
           type: http
@@ -81,9 +87,10 @@ services:
       function:
         name: model_app_func
         description: Deploy ModelScope applications of model {{ modelId }}
-        handler: not-used
+        codeUri: ./model_deploy
+        handler: {{ if imageTag == 'fc-deploy-common-v17.3.3' }}not-used{{ else }}index.handler
         timeout: 1800
-        caPort: 9000
+        caPort: {{ if imageTag == 'fc-deploy-common-v17.3.3' }}9000{{ else }}11434
         instanceType: {{ gpuInstanceType }}
         gpuMemorySize: {{ gpuMemorySize }}
         memorySize: {{ memorySize }}
@@ -101,6 +108,12 @@ services:
           MODELSCOPE_CACHE: /mnt/auto
           MODELSCOPE_TOKEN: {{ accessToken }}
           TASK: {{ task }}
+          IMAGE_TAG: {{ imageTag }}
+          GGUF_FILE: {{ ggufFile }}
+          MODELFLE: {{ modelfile }}
+          MODEL_FAMILY: {{ modelFamily }}
+          MODELSCOPE_DOMAIN: {{ modelCache }}
+          SERVED_MODEL_NAME: {{ servedModelName }}
 
       triggers:
         - name: httpTrigger
