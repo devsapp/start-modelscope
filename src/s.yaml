@@ -57,7 +57,7 @@ services:
         name: model_meta_func
         description: Meta Api
         codeUri: ./model_meta_info
-        handler: {{ if imageTag == 'fc-deploy-common-v17.3.3' }}not-used{{ else }}index.handler
+        handler: "{{ if imageTag == 'fc-deploy-common-v17.3.3' }}not-used{{ else }}index.handler{{ /if }}"
         timeout: 1800
         caPort: 9000
         instanceType: g1
@@ -88,9 +88,9 @@ services:
         name: model_app_func
         description: Deploy ModelScope applications of model {{ modelId }}
         codeUri: ./model_deploy
-        handler: {{ if imageTag == 'fc-deploy-common-v17.3.3' }}not-used{{ else }}index.handler
+        handler: "{{ if imageTag == 'fc-deploy-common-v17.3.3' }}not-used{{ else }}index.handler{{ /if }}"
         timeout: 1800
-        caPort: {{ if imageTag == 'fc-deploy-common-v17.3.3' }}9000{{ else }}11434
+        caPort: "{{ if imageTag == 'fc-deploy-common-v17.3.3' }}9000{{ else }}11434{{ /if }}"
         instanceType: {{ gpuInstanceType }}
         gpuMemorySize: {{ gpuMemorySize }}
         memorySize: {{ memorySize }}
