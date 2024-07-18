@@ -87,11 +87,10 @@ services:
       function:
         name: model_app_func
         description: Deploy ModelScope applications of model {{ modelId }}
-        codeUri: ./model_deploy
-        handler: "{{ if imageTag == 'fc-deploy-common-v17.3.3' }}not-used{{ else }}index.handler{{ /if }}"
+        handler: not-used
         timeout: 1800
-        caPort: "{{ if imageTag == 'fc-deploy-common-v17.3.3' }}9000{{ else }}11434{{ /if }}"
-        instanceType: {{ gpuInstanceType }}
+        caPort: 9000
+        instanceType: {{ instanceType }}
         gpuMemorySize: {{ gpuMemorySize }}
         memorySize: {{ memorySize }}
         cpu: 2
@@ -114,7 +113,9 @@ services:
           MODEL_FAMILY: {{ modelFamily }}
           MODELSCOPE_DOMAIN: {{ modelCache }}
           SERVED_MODEL_NAME: {{ servedModelName }}
-
+        customRuntimeConfig:
+          command: ["/bin/sh", "-c"]
+          args: ["wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/run_deploy.sh; /bin/sh run_deploy.sh"]
       triggers:
         - name: httpTrigger
           type: http
