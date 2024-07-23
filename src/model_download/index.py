@@ -26,7 +26,7 @@ def handler(event, context):
         command_download_ollama = f'modelscope download --model=modelscope/ollama-linux --local_dir {cache_dir}/ollama-linux'
         os.system(command_download_ollama)
 
-        command_download_model = f'modelscope download --model={model_id} --local_dir {cache_dir} ${gguf_file}'
+        command_download_model = f'modelscope download --model={model_id} --local_dir {cache_dir} {gguf_file}'
         os.system(command_download_model)
-        
+
         print("download model scuccess!")

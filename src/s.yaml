@@ -45,8 +45,7 @@ services:
           MODELSCOPE_DOMAIN: {{ modelCache }}
           IMAGE_TAG: {{ imageTag }}
           GGUF_FILE: {{ ggufFile }}
-          MODELFILE: {{ modelfile }}
-          MODEL_FAMILY: {{ modelFamily }}
+          MODELFILE: {{ modelfileUrl }}
 
   model_meta_func:
     component: 'fc'
@@ -111,8 +110,7 @@ services:
           TASK: {{ task }}
           IMAGE_TAG: {{ imageTag }}
           GGUF_FILE: {{ ggufFile }}
-          MODELFLE: {{ modelfile }}
-          MODEL_FAMILY: {{ modelFamily }}
+          MODELFILE: {{ modelfileUrl }}
           MODELSCOPE_DOMAIN: {{ modelCache }}
           SERVED_MODEL_NAME: {{ servedModelName }}
       triggers:
