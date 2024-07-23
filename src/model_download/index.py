@@ -22,6 +22,7 @@ def handler(event, context):
                                 cache_dir = cache_dir)
         print("download model scuccess!")
     else:
+        os.system('pip install modelscope==1.16')
         command_download_ollama = f'modelscope download --model=modelscope/ollama-linux --local_dir {cache_dir}/ollama-linux'
         os.system(command_download_ollama)
 

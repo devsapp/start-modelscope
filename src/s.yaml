@@ -45,7 +45,7 @@ services:
           MODELSCOPE_DOMAIN: {{ modelCache }}
           IMAGE_TAG: {{ imageTag }}
           GGUF_FILE: {{ ggufFile }}
-          MODELFLE: {{ modelfile }}
+          MODELFILE: {{ modelfile }}
           MODEL_FAMILY: {{ modelFamily }}
 
   model_meta_func:
@@ -101,6 +101,8 @@ services:
         runtime: custom-container
         customContainerConfig:
           image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
+          command: ["/bin/sh", "-c"]
+          args: ["wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/run_deploy.sh; /bin/sh run_deploy.sh"]
         environmentVariables:
           MODEL_ID: {{ modelId }}
           MODEL_VERSION: {{ modelRevision }}
@@ -113,9 +115,6 @@ services:
           MODEL_FAMILY: {{ modelFamily }}
           MODELSCOPE_DOMAIN: {{ modelCache }}
           SERVED_MODEL_NAME: {{ servedModelName }}
-        customRuntimeConfig:
-          command: ["/bin/sh", "-c"]
-          args: ["wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/run_deploy.sh; /bin/sh run_deploy.sh"]
       triggers:
         - name: httpTrigger
           type: http
