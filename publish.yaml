@@ -136,12 +136,12 @@ Parameters:
     ggufFile:
       title: gguf文件
       type: string
-      default: "gemma-2-9b-it-Q5_K_L.gguf"
+      default: " "
       description: gguf格式的模型文件，使用ollama启动时为必须参数
     modelfileUrl:
       title: ollama模型template文件链接
       type: string
-      default: "https://modelscope.oss-cn-beijing.aliyuncs.com/llm_template/ollama/gemma2.modelfile"
+      default: " "
       description: ollama创建模型时所需的模型template文件的链接，使用ollama启动时为必须参数
     servedModelName:
       title: 模型服务名
