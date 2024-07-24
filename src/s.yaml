@@ -46,6 +46,7 @@ services:
           IMAGE_TAG: {{ imageTag }}
           GGUF_FILE: {{ ggufFile }}
           MODELFILE: {{ modelfileUrl }}
+          SERVED_MODEL_NAME: {{ servedModelName }}
 
   model_meta_func:
     component: 'fc'
