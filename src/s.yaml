@@ -93,7 +93,7 @@ services:
         gpuMemorySize: {{ gpuMemorySize }}
         memorySize: {{ memorySize }}
         cpu: 2
-        diskSize: 512
+        diskSize: 10240
         instanceConcurrency: 1
         initializer: 'true'
         initializationTimeout: 300
