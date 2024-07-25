@@ -99,6 +99,11 @@ services:
         initializer: 'true'
         initializationTimeout: 300
         runtime: custom-container
+        healthCheckConfig:
+          initialDelaySeconds: 120
+          failureThreshold: 120
+          periodSeconds: 120
+          timeoutSeconds: 3
         customContainerConfig:
           image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
           command: '["/bin/sh", "-c"]'

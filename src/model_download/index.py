@@ -33,7 +33,7 @@ def handler(event, context):
         command_download_model = f'modelscope download --model={model_id} --local_dir {cache_dir} {gguf_file}'
         os.system(command_download_model)
 
-        os.system(f'cd {cache_dir}/ollama-linux && sudo chmod 777 ./ollama-modelscope-install.sh && ./ollama-modelscope-install.sh')
+        os.system(f'cd {cache_dir}/ollama-linux && chmod 777 ./ollama-modelscope-install.sh && ./ollama-modelscope-install.sh')
         os.system(f'OLLAMA_MODELS={cache_dir} OLLAMA_HOST=127.0.0.1:9000 ollama serve &')
         os.system(f'wget {modelfile} -O /home/modelfile')
 
