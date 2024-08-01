@@ -86,7 +86,7 @@ services:
         handler: not-used
         timeout: 1800
         caPort: 9000
-        instanceType: {{ instanceType }}
+        instanceType: {{ if instanceType == 'c1' or instanceType == 'e1' }}'g1'{{ else }}{{ instanceType }}{{/if}}
         gpuMemorySize: {{ gpuMemorySize }}
         memorySize: {{ memorySize }}
         cpu: 2
