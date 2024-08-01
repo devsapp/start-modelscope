@@ -44,9 +44,8 @@ services:
           MODELSCOPE_TOKEN: {{ accessToken }}
           MODELSCOPE_DOMAIN: {{ modelCache }}
           IMAGE_TAG: {{ imageTag }}
-          GGUF_FILE: {{ ggufFile }}
-          MODELFILE: {{ modelfileUrl }}
-          SERVED_MODEL_NAME: {{ servedModelName }}
+          SUB_MODEL_FILE: {{ subModelFile }}
+          TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/{{ templateFileUrl }}
 
   model_meta_func:
     component: 'fc'
@@ -56,8 +55,7 @@ services:
       function:
         name: model_meta_func
         description: Meta Api
-        codeUri: ./model_meta_info
-        handler: "{{ if imageTag == 'fc-deploy-common-v17.3.3' }}not-used{{ else }}index.handler{{ /if }}"
+        handler: not-used
         timeout: 1800
         caPort: 9000
         instanceType: g1
@@ -69,8 +67,6 @@ services:
         runtime: custom-container
         customContainerConfig:
           image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-        environmentVariables:
-          SERVED_MODEL_NAME: {{ servedModelName }}
       triggers:
         - name: httpTrigger
           type: http
@@ -99,8 +95,8 @@ services:
         runtime: custom-container
         customContainerConfig:
           image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-          command: '["/bin/sh", "-c"]'
-          args: '["wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/run_deploy.sh; /bin/sh run_deploy.sh"]'
+          command: {{ if imageTag === 'fc-deploy-common-v17.3.3' }}'["python3", "-u"]'{{ else }}'["/bin/sh", "-c"]'{{/if}}
+          args: {{ if imageTag === 'fc-deploy-common-v17.3.3' }}'["/usr/src/app/app.py"]'{{ else }}'["wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/run_deploy.sh; /bin/sh run_deploy.sh"]'{{/if}}
         environmentVariables:
           MODEL_ID: {{ modelId }}
           MODEL_VERSION: {{ modelRevision }}
@@ -108,10 +104,9 @@ services:
           MODELSCOPE_TOKEN: {{ accessToken }}
           TASK: {{ task }}
           IMAGE_TAG: {{ imageTag }}
-          GGUF_FILE: {{ ggufFile }}
-          MODELFILE: {{ modelfileUrl }}
+          SUB_MODEL_FILE: {{ subModelFile }}
+          TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/{{ templateFileUrl }}
           MODELSCOPE_DOMAIN: {{ modelCache }}
-          SERVED_MODEL_NAME: {{ servedModelName }}
       triggers:
         - name: httpTrigger
           type: http

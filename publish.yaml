@@ -42,10 +42,8 @@ Parameters:
     - gpuMemorySize
     - memorySize
     - modelCache
-    - ggufFile
-    - modelfile
-    - modelFamily
-    - servedModelName
+    - subModelFile
+    - templateFileUrl
   properties:
     region:
       title: 地域
@@ -60,7 +58,7 @@ Parameters:
       title: modelscope镜像tag
       type: string
       default: fc-deploy-common-v17.3.3
-      description: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope镜像的tag版本。当前fc-deploy-common-v17.3.3版本会调用pipeline，其他版本会调用ollama拉起。增加该配置旨在可支持后续根据模型id等指定具体测过版本的镜像。
+      description: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope镜像的tag版本。原生流程请用fc-deploy-common-v17.3.3。
     serviceName:
       title: 服务名
       type: string
@@ -96,7 +94,7 @@ Parameters:
       title: 模型任务类型
       type: string
       default: 'image-portrait-enhancement'
-      description: ModelScope的模型任务类型，可以从 https://modelscope.cn/models 模型页获取，pipeline运行时需要配置
+      description: ModelScope的模型任务类型，可以从 https://modelscope.cn/models 模型页获取
     accessToken:
       title: Access Token
       type: secret
@@ -141,19 +139,13 @@ Parameters:
       enum:
         - "ollama"
         - "pipeline"
-    ggufFile:
-      title: gguf文件
+    subModelFile:
+      title: model_id下的子文件，如选择特定的某一个gguf文件
       type: string
       default: "gemma-2-9b-it-Q5_K_L.gguf"
-      description: gguf格式的模型文件。同一个model_id下，存在不同精度的gguf文件，指定其中一个运行
-    modelfileUrl:
+      description: 子模型文件。同一个model_id下，可能存在不同精度的子模型文件（如gguf文件），指定其中一个运行
+    templateFileUrl:
       title: 模型template文件链接
       type: string
       default: "https://modelscope.oss-cn-beijing.aliyuncs.com/llm_template/ollama/gemma2.modelfile"
-      description: 模型时所需的模型template文件的链接，使用ollama、lmdeploy为后端启动时为必须参数。其中gguf路径应以{gguf_file}表示，在执行时会被替换成容器内真实可访问的路径。
-    servedModelName:
-      title: 模型服务名
-      type: string
-      default: "mymodel"
-      pattern: "^[a-zA-Z_][a-zA-Z0-9-_]{0,127}$"
-      description: 用户可配置的部署后模型名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+      description: 模型时所需的模型template文件的链接，使用ollama启动时为必须参数。其中gguf路径应以{gguf_file}表示，在执行时会被替换成容器内真实可访问的路径。
