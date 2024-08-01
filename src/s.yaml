@@ -82,7 +82,7 @@ services:
       service: ${vars.service}
       function:
         name: model_app_func_gpu
-        description: [GPU] Deploy ModelScope applications of model {{ modelId }}
+        description: Deploy ModelScope applications of model {{ modelId }}
         handler: not-used
         timeout: 1800
         caPort: 9000
@@ -130,7 +130,7 @@ services:
       service: ${vars.service}
       function:
         name: model_app_func_cpu
-        description: [CPU] Deploy ModelScope applications of model {{ modelId }}
+        description: Deploy ModelScope applications of model {{ modelId }}
         handler: not-used
         timeout: 1800
         caPort: 9000
