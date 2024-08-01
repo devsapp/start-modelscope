@@ -86,7 +86,7 @@ services:
         handler: not-used
         timeout: 1800
         caPort: 9000
-        instanceType: {{ if instanceType == 'c1' or instanceType == 'e1' }}'g1'{{ else }}{{ instanceType }}{{/if}}
+        instanceType: {{ if instanceType == 'c1' | instanceType == 'e1' }}'g1'{{ else }}{{ instanceType }}{{/if}}
         gpuMemorySize: {{ gpuMemorySize }}
         memorySize: {{ memorySize }}
         cpu: 2
@@ -95,8 +95,8 @@ services:
         runtime: custom-container
         customContainerConfig:
           image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-          command: {{ if imageTag === 'fc-deploy-common-v17.3.3' }}'["python3", "-u"]'{{ else }}'["/bin/sh", "-c"]'{{/if}}
-          args: {{ if imageTag === 'fc-deploy-common-v17.3.3' }}'["/usr/src/app/app.py"]'{{ else }}'["wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/run_deploy.sh; /bin/sh run_deploy.sh"]'{{/if}}
+          command: {{ if imageTag == 'fc-deploy-common-v17.3.3' }}'["python3", "-u"]'{{ else }}'["/bin/sh", "-c"]'{{/if}}
+          args: {{ if imageTag == 'fc-deploy-common-v17.3.3' }}'["/usr/src/app/app.py"]'{{ else }}'["wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/run_deploy.sh; /bin/sh run_deploy.sh"]'{{/if}}
         environmentVariables:
           MODEL_ID: {{ modelId }}
           MODEL_VERSION: {{ modelRevision }}
