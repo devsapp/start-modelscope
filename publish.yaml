@@ -114,8 +114,8 @@ Parameters:
       title: 显存大小
       type: string
       default: "16384"
-      pattern: "^(1024|2048|3072|4096|5120|6144|7168|8192|9216|10240|11264|12288|13312|14336|15360|16384|17408|18432|19456|20480|21504|22528|23552|24576)$"
-      description: 应用分配显存大小，GPU实例显存规格详细信息：https://help.aliyun.com/document_detail/179379.html?spm=a2c4g.179379.0.0.2b6d15f9T9xx3o#section-mfv-5fb-ehw
+      pattern: "^(not-used|0|1024|2048|3072|4096|5120|6144|7168|8192|9216|10240|11264|12288|13312|14336|15360|16384|17408|18432|19456|20480|21504|22528|23552|24576)$"
+      description: 应用分配显存大小。GPU实例显存规格详细信息：https://help.aliyun.com/document_detail/179379.html?spm=a2c4g.179379.0.0.2b6d15f9T9xx3o#section-mfv-5fb-ehw
     memorySize:
       title: 内存大小
       type: string
@@ -147,5 +147,5 @@ Parameters:
     templateFileUrl:
       title: 模型template文件链接
       type: string
-      default: "https://modelscope.oss-cn-beijing.aliyuncs.com/llm_template/ollama/gemma2.modelfile"
+      default: "llm_template/ollama/gemma2.modelfile"
       description: 模型时所需的模型template文件的链接，使用ollama启动时为必须参数。其中gguf路径应以{gguf_file}表示，在执行时会被替换成容器内真实可访问的路径。
