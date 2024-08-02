@@ -134,7 +134,7 @@ services:
         handler: not-used
         timeout: 1800
         caPort: 9000
-        instanceType: {{ instanceType }}
+        instanceType: {{ if instanceType == 'c1' | instanceType == 'e1' }}{{ instanceType }}{{ else }}'e1'{{/if}}
         memorySize: {{ memorySize }}
         cpu: 8
         diskSize: 10240
