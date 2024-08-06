@@ -45,7 +45,7 @@ services:
           MODELSCOPE_DOMAIN: {{ modelCache }}
           IMAGE_TAG: {{ imageTag }}
           SUB_MODEL_FILE: {{ subModelFile }}
-          TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/{{ templateFileUrl }}
+          TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/{{ templateFile }}
 
   model_meta_func:
     component: 'fc'
@@ -75,19 +75,19 @@ services:
             methods:
               - GET
 
-  tgpu_basic_func:
+  t_basic_func:
     component: 'fc'
     props:
       region: ${vars.region}
       service: ${vars.service}
       function:
-        name: model_app_func_gpu
+        name: model_app_func
         description: Deploy ModelScope applications of model {{ modelId }}
         handler: not-used
         timeout: 1800
         caPort: 9000
         instanceType: {{ instanceType }}
-        {{ if instanceType === 'fc.gpu.tesla.1' || instanceType === 'fc.gpu.ampere.1' }}gpuMemorySize: {{ gpuMemorySize }}{{ /if }}
+        {{ if gpuMemorySize != '0' }}gpuMemorySize: {{ gpuMemorySize }}{{ /if }}
         memorySize: {{ memorySize }}
         cpu: 8
         diskSize: 10240
@@ -105,7 +105,7 @@ services:
           TASK: {{ task }}
           IMAGE_TAG: {{ imageTag }}
           SUB_MODEL_FILE: {{ subModelFile }}
-          TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/{{ templateFileUrl }}
+          TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/{{ templateFile }}
           MODELSCOPE_DOMAIN: {{ modelCache }}
       triggers:
         - name: httpTrigger
@@ -145,7 +145,7 @@ services:
           TASK: {{ task }}
           PATH: /opt/python3.9/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
           PYTHONPATH: /opt/python
-          API_URL: ${tgpu_basic_func.output.url.system_url}
+          API_URL: ${t_basic_func.output.url.system_url}
         customRuntimeConfig:
           command:
             - python3.9
