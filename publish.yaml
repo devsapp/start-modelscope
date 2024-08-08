@@ -37,13 +37,9 @@ Parameters:
     - serviceName
     - roleArn
     - modelId
-    - modelRevision
-    - task
     - gpuMemorySize
     - memorySize
     - modelCache
-    - subModelFile
-    - templateFileUrl
   properties:
     region:
       title: 地域
@@ -115,7 +111,7 @@ Parameters:
       type: string
       default: "16384"
       pattern: "^(0|1024|2048|3072|4096|5120|6144|7168|8192|9216|10240|11264|12288|13312|14336|15360|16384|17408|18432|19456|20480|21504|22528|23552|24576)$"
-      description: 应用分配显存大小。GPU实例显存规格详细信息：https://help.aliyun.com/document_detail/179379.html?spm=a2c4g.179379.0.0.2b6d15f9T9xx3o#section-mfv-5fb-ehw
+      description: 应用分配显存大小。CPU实例请配置为0。GPU实例显存规格详细信息：https://help.aliyun.com/document_detail/179379.html?spm=a2c4g.179379.0.0.2b6d15f9T9xx3o#section-mfv-5fb-ehw
     memorySize:
       title: 内存大小
       type: string
