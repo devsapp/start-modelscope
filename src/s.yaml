@@ -7,10 +7,10 @@ access: {{ access }}
 
 vars: # 全局变量
   region: {{ region }}
-  version: fc-deploy-common-v17.3.4
+  version: {{ imageTag }}
   name: {{ name }}
   role: {{ roleArn }}
-  gpuInstanceType: {{ gpuInstanceType }}
+  instanceType: {{ instanceType }}
   gpuMemorySize: {{ gpuMemorySize }}
   memorySize: {{ memorySize }}
   modelID: {{ modelId }}
@@ -63,6 +63,9 @@ resources:
         MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         MODELSCOPE_DOMAIN: ${vars.modelCache}
+        IMAGE_TAG: {{ imageTag }}
+        SUB_MODEL_FILE: {{ subModelFile }}
+        TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/{{ templateFile }}
 
   model_meta_func:
     component: 'fc3'
@@ -98,7 +101,7 @@ resources:
             methods:
               - GET
 
-  tgpu_basic_func:
+  t_basic_func:
     component: 'fc3'
     props:
       region: ${vars.region}
@@ -108,11 +111,12 @@ resources:
       handler: not-used
       timeout: 1800
       memorySize: ${vars.memorySize}
-      cpu: 2
+      cpu: 8
       diskSize: 512
-      gpuConfig:
+      {{ if gpuMemorySize != '0' }}gpuConfig:
         gpuMemorySize: ${vars.gpuMemorySize}
-        gpuType: ${vars.gpuInstanceType}
+        gpuType: ${vars.instanceType}{{ /if }}
+      {{ if gpuMemorySize == '0'}}instanceType: ${vars.instanceType}{{ /if }}
       instanceConcurrency: 1
       runtime: custom-container
       initializer: 'true'
@@ -122,6 +126,8 @@ resources:
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
+        command: {{ if imageTag === 'fc-deploy-common-v17.3.3' }}["python3", "-u"]{{ else }}["/bin/sh", "-c"]{{/if}}
+        args: {{ if imageTag === 'fc-deploy-common-v17.3.3' }}["/usr/src/app/app.py"]{{ else }}["wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/run_deploy.sh; /bin/sh run_deploy.sh"]{{/if}}
         port: 9000
       environmentVariables:
         MODEL_ID: ${vars.modelID}
@@ -129,6 +135,10 @@ resources:
         MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}/
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         TASK: ${vars.modelTask}
+        IMAGE_TAG: ${vars.version}
+        SUB_MODEL_FILE: {{ subModelFile }}
+        TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/{{ templateFile }}
+        MODELSCOPE_DOMAIN: {{ modelCache }}
       triggers:
         - triggerName: httpTrigger
           triggerType: http
