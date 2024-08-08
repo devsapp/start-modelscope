@@ -18,6 +18,8 @@ vars: # 全局变量
   modelTask: {{ modelTask }}
   modelAccessToken: {{ accessToken }}
   modelCache: {{ modelCache }}
+  subModelFile: {{ subModelFile }}
+  templateFile: {{ templateFile }}
 resources:
   model_cache:
     component: 'fc3'
@@ -62,9 +64,9 @@ resources:
         MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         MODELSCOPE_DOMAIN: ${vars.modelCache}
-        IMAGE_TAG: {{ imageTag }}
-        SUB_MODEL_FILE: {{ subModelFile }}
-        TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/{{ templateFile }}
+        IMAGE_TAG: ${vars.imageTag}
+        SUB_MODEL_FILE: ${vars.subModelFile}
+        TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/${vars.templateFile}
 
   model_meta_func:
     component: 'fc3'
@@ -111,7 +113,7 @@ resources:
       timeout: 1800
       memorySize: ${vars.memorySize}
       cpu: 8
-      diskSize: 512
+      diskSize: 10240
       {{ if gpuMemorySize != '0' }}gpuConfig:
         gpuMemorySize: ${vars.gpuMemorySize}
         gpuType: ${vars.instanceType}{{ else }}instanceType: ${vars.instanceType}{{ /if }}
@@ -134,9 +136,9 @@ resources:
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         TASK: ${vars.modelTask}
         IMAGE_TAG: ${vars.version}
-        SUB_MODEL_FILE: {{ subModelFile }}
-        TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/{{ templateFile }}
-        MODELSCOPE_DOMAIN: {{ modelCache }}
+        SUB_MODEL_FILE: ${vars.subModelFile}
+        TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/${vars.templateFile}
+        MODELSCOPE_DOMAIN: ${vars.modelCache}
       triggers:
         - triggerName: httpTrigger
           triggerType: http
@@ -171,7 +173,7 @@ resources:
         TASK: ${vars.modelTask}
         PATH: /opt/python3.9/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
         PYTHONPATH: /opt/python
-        API_URL: ${resources.tgpu_basic_func.output.url.system_url}
+        API_URL: ${resources.t_basic_func.output.url.system_url}
       customRuntimeConfig:
         command:
           - python3.9
