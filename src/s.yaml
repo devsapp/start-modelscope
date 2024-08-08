@@ -17,8 +17,7 @@ vars: # 全局变量
   modelRevision: {{ modelRevision }}
   modelTask: {{ modelTask }}
   modelAccessToken: {{ accessToken }}
-  modelCache: modelsce-mirror-modelsce-mirror-txpzbgwcck.${vars.region}-vpc.fcapp.run
-
+  modelCache: {{ modelCache }}
 resources:
   model_cache:
     component: 'fc3'
@@ -115,8 +114,7 @@ resources:
       diskSize: 512
       {{ if gpuMemorySize != '0' }}gpuConfig:
         gpuMemorySize: ${vars.gpuMemorySize}
-        gpuType: ${vars.instanceType}{{ /if }}
-      {{ if gpuMemorySize == '0'}}instanceType: ${vars.instanceType}{{ /if }}
+        gpuType: ${vars.instanceType}{{ else }}instanceType: ${vars.instanceType}{{ /if }}
       instanceConcurrency: 1
       runtime: custom-container
       initializer: 'true'
