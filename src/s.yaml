@@ -64,7 +64,7 @@ resources:
         MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         MODELSCOPE_DOMAIN: ${vars.modelCache}
-        IMAGE_TAG: ${vars.imageTag}
+        IMAGE_TAG: ${vars.version}
         SUB_MODEL_FILE: ${vars.subModelFile}
         TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/${vars.templateFile}
 
@@ -126,8 +126,7 @@ resources:
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-        command: {{ if imageTag === 'fc-deploy-common-v17.3.3' }}["python3", "-u"]{{ else }}["/bin/sh", "-c"]{{/if}}
-        args: {{ if imageTag === 'fc-deploy-common-v17.3.3' }}["/usr/src/app/app.py"]{{ else }}["wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/run_deploy.sh; /bin/sh run_deploy.sh"]{{/if}}
+        command: {{ if imageTag === 'fc-deploy-common-v17.3.3' }}["python3", "-u", "/usr/src/app/app.py"]{{ else }}["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/run_deploy.sh; /bin/sh run_deploy.sh"]{{/if}}
         port: 9000
       environmentVariables:
         MODEL_ID: ${vars.modelID}
