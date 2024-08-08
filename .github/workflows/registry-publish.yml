@@ -13,21 +13,19 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
-          node-version: 12
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel twine
           pip install requests
-      - name: Add publish file
+      - name: install s
         run: |
-          wget https://serverless-registry.oss-cn-hangzhou.aliyuncs.com/publish-file/python3/hub-publish.py
-          ls
-      - name: Publish package
-        env:
-          publish_token: ${{ secrets.alibaba_registry_publish_token }}
+          npm i @serverless-devs/s@v3 -g
+      - name: s registry login & publish
         run: |
-          ls
-          python hub-publish.py
+          s registry login --token ${{ secrets.alibaba_registry_v3_publish_token }}
+          s registry publish
