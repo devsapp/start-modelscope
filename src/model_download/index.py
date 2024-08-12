@@ -15,7 +15,7 @@ def handler(event, context):
     HubApi().login(sdk_token)
     if image_tag == 'fc-deploy-common-v17.3.3':
         if len(revision) > 0:
-            snapshot_download (model_id =model_id, 
+            snapshot_download (model_id =model_id,
                             revision =revision,
                             cache_dir = cache_dir)
         else:
@@ -26,8 +26,11 @@ def handler(event, context):
         os.system('pip config set global.index-url https://mirrors.cloud.aliyuncs.com/pypi/simple')
         os.system('pip config set install.trusted-host mirrors.cloud.aliyuncs.com')
         os.system('pip install --default-timeout=100 modelscope==1.16')
-        command_download_ollama = f'modelscope download --model=modelscope/ollama-linux --local_dir {cache_dir}/ollama-linux'
-        os.system(command_download_ollama)
+
+        # using latest ollama
+        api = HubApi()
+        latest_ollama = api.list_model_revisions(model_id='modelscope/ollama-linux')[0]
+        os.system(f'modelscope download --model=modelscope/ollama-linux --local_dir {cache_dir}/ollama-linux --revision {latest_ollama}')
 
         command_download_model = f'modelscope download --model={model_id} --local_dir {cache_dir} {sub_model_file}'
         os.system(command_download_model)
