@@ -9,12 +9,12 @@
 
 Edition: 3.0.0
 Type: Project
-Name: start-modelscope-v3
+Name: start-dipper-modelscope
 Provider:
   - 阿里云 
-Version: 0.1.6
+Version: 0.0.1
 Description: ModelScope应用(fc3.0)
-HomePage: https://github.com/devsapp/start-modelscope-v3
+HomePage: https://github.com/devsapp/start-modelscope
 Tags:
   - AIGC
   - 大模型
@@ -24,6 +24,13 @@ Service:
   函数计算:
     Authorities:
       - AliyunFCFullAccess
+  硬盘挂载:
+    Authorities:
+      - AliyunFCServerlessDevsRolePolicy
+  专有网络:
+    Authorities:
+      - AliyunFCServerlessDevsRolePolicy
+  
 Effective: Public
 Parameters:
   type: object
