@@ -185,21 +185,15 @@ resources:
               - GET
               - POST
               - PUT
-
-  model_ui_func_domain:
-    component: 'fc3-domain'
-    props:
-      region: ${vars.region}
-      domainName: auto
-      protocol: HTTP
-      routeConfig:
-        routes:
-          - functionName: ${resources.model_ui_func.props.functionName}
-            methods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-            path: /*
-            qualifier: LATEST
+      customDomain:
+        domainName: "auto"
+        protocol: HTTP
+        route:
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          path: /*
+          qualifier: LATEST

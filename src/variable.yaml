@@ -1,0 +1,32 @@
+shared: #共享变量
+  modelId:
+    title: 模型ID
+    type: string
+    default: 'damo/nlp_structbert_sentiment-classification_chinese-ecommerce-base'
+    description: ModelScope的模型ID, 可以从 https://modelscope.cn/models 模型页获取
+  modelRevision:
+    title: 模型版本
+    type: string
+    default: 'v1.0.0'
+    description: ModelScope的模型版本，可以从 https://modelscope.cn/models 模型页获取
+  modelTask:
+    title: 模型任务类型
+    type: string
+    default: 'text-classification'
+    description: ModelScope的模型任务类型，可以从 https://modelscope.cn/models 模型页获取
+  accessToken:
+    title: Access Token
+    type: string
+    sensitive: true
+    description: ModelScope的访问令牌（SDK令牌），从https://modelscope.cn/my/myaccesstoken获取
+
+services: #服务变量
+  tgpu_basic_func:
+    gpuInstanceType:
+      title: GPU实例类型
+      type: string
+      default: "fc.gpu.tesla.1"
+      description: GPU实例类型
+      enum:
+        - "fc.gpu.tesla.1"
+        - "fc.gpu.ampere.1"
