@@ -11,13 +11,13 @@ vars: # 全局变量
   name: {{ name }}
   role: {{ roleArn }}
   instanceType: {{ instanceType }}
-  gpuMemorySize: {{ gpuMemorySize }}
+  gpuMemorySize: {{ if instanceType == 'c1' || if instanceType == 'e1' }}0{{else}}16384{{/if}}
   memorySize: {{ memorySize }}
   modelID: {{ modelId }}
   modelRevision: {{ modelRevision }}
   modelTask: {{ modelTask }}
   modelAccessToken: {{ accessToken }}
-  modelCache: {{ modelCache }}
+  modelCache: modelsce-mirror-modelsce-mirror-txpzbgwcck.{{ region }}-vpc.fcapp.run
   subModelFile: {{ subModelFile }}
   templateFile: {{ templateFile }}
 resources:
@@ -114,7 +114,7 @@ resources:
       memorySize: ${vars.memorySize}
       cpu: 8
       diskSize: 10240
-      {{ if gpuMemorySize != '0' }}gpuConfig:
+      {{ if instanceType != 'c1' || if instanceType != 'e1' }}gpuConfig:
         gpuMemorySize: ${vars.gpuMemorySize}
         gpuType: ${vars.instanceType}{{ else }}instanceType: ${vars.instanceType}{{ /if }}
       instanceConcurrency: 1
