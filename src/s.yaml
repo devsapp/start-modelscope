@@ -114,7 +114,7 @@ resources:
       memorySize: ${vars.memorySize}
       cpu: 8
       diskSize: 10240
-      {{ if instanceType != 'c1' || instanceType != 'e1' }}gpuConfig:
+      {{ if instanceType != 'c1' && instanceType != 'e1' }}gpuConfig:
         gpuMemorySize: ${vars.gpuMemorySize}
         gpuType: ${vars.instanceType}{{ else }}instanceType: ${vars.instanceType}{{ /if }}
       instanceConcurrency: 1

@@ -51,6 +51,9 @@ def handler(event, context):
         os.system(f'echo  {cache_dir}/{sub_model_file}')
         os.system(f'ln -snf {cache_dir}/{sub_model_file} /home/{sub_model_file}')
 
+        if not os.path.exists('/home/modelfile'):
+            print(f'[ERROR] Download {template_file_url} failed.')
+
         with open('/home/modelfile', 'r') as f_in, open('/home/ModelFile', 'w') as f_out:
             lines = f_in.readlines()
             lines[0] = 'FROM {gguf_file}\n'.replace('{gguf_file}', f'{sub_model_file}')
