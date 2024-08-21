@@ -13,16 +13,15 @@ def handler(event, context):
     template_file_url = os.getenv('TEMPLATE_FILE_URL', '')
 
     # login first.
-    api = None
     try:
         # model cache url
-        api = HubApi().login(sdk_token)
+        api = HubApi()
+        api.login(sdk_token)
     except BaseException as e:
         print(f'[INFO] Download model from www.modelscope.cn, cache failed: {e}, {traceback.print_exc()}')
         os.environ['MODELSCOPE_DOMAIN'] = 'www.modelscope.cn'
-    
-    if not api:
-        api = HubApi().login(sdk_token)
+        api = HubApi()
+        api.login(sdk_token)
 
     if image_tag == 'fc-deploy-common-v17.3.3':
         if len(revision) > 0:
