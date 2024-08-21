@@ -11,7 +11,7 @@ vars: # 全局变量
   name: {{ name }}
   role: {{ roleArn }}
   instanceType: {{ instanceType }}
-  gpuMemorySize: {{ if instanceType == 'c1' || if instanceType == 'e1' }}0{{else if gpuMemorySize == '0'}}16384{{else}}{{ gpuMemorySize }}{{/if}}
+  gpuMemorySize: {{ if instanceType == 'c1' || instanceType == 'e1' }}0{{else if gpuMemorySize == '0'}}16384{{else}}{{ gpuMemorySize }}{{/if}}
   memorySize: {{ memorySize }}
   modelID: {{ modelId }}
   modelRevision: {{ modelRevision }}
