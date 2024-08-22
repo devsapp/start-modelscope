@@ -38,9 +38,11 @@ def handler(event, context):
         os.system('pip install --default-timeout=100 modelscope==1.16')
 
         # using latest ollama
+        print('[INFO] Downloading and installing the latest ollama. ')
         latest_ollama = api.list_model_revisions(model_id='modelscope/ollama-linux')[0]
         os.system(f'modelscope download --model=modelscope/ollama-linux --local_dir {cache_dir}/ollama-linux --revision {latest_ollama}')
 
+        print(f'[INFO] Downloading model file. ')
         command_download_model = f'modelscope download --model={model_id} --local_dir {cache_dir} {sub_model_file}'
         os.system(command_download_model)
 
@@ -51,14 +53,15 @@ def handler(event, context):
         os.system(f'echo  {cache_dir}/{sub_model_file}')
         os.system(f'ln -snf {cache_dir}/{sub_model_file} /home/{sub_model_file}')
 
-        if not os.path.exists('/home/modelfile'):
-            print(f'[ERROR] Download {template_file_url} failed.')
-
         with open('/home/modelfile', 'r') as f_in, open('/home/ModelFile', 'w') as f_out:
             lines = f_in.readlines()
+            if not len(lines):
+                print(f'[ERROR] Failed to download {template_file_url}.')
             lines[0] = 'FROM {gguf_file}\n'.replace('{gguf_file}', f'{sub_model_file}')
             print(f'[INFO] modelfile:\n{lines}')
             f_out.writelines(lines)
+
+        print('[INFO] Create the model with ollama in advance and cache it.')
 
         os.system(f'OLLAMA_HOST=0.0.0.0:9000 ollama create {model_id} --file /home/ModelFile')
 
