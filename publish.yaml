@@ -95,7 +95,10 @@ Parameters:
       title: 模型运行实例类型
       type: string
       default: "fc.gpu.tesla.1"
-      description: 模型运行实例类型：e1（弹性实例）、c1（性能实例）、fc.gpu.tesla.1（GPU T4实例）、fc.gpu.ampere.1（GPU A10实例）
+      description: 请谨慎修改！修改时遵循：
+      \n  1.预选为CPU时，请勿在此切换为GPU实例。反之亦然。（如：预配了CPU镜像环境，在此切换为GPU机器会由于环境无cuda，造成GPU无法使用的浪费）
+      \n  2.修改为配置更低的硬件存在失败风险（如：显存或内存变小后，无法加载模型）。
+      \n模型运行实例类型：e1（CPU 弹性实例）、c1（CPU 性能实例）、fc.gpu.tesla.1（GPU T4实例）、fc.gpu.ampere.1（GPU A10实例）
       enum:
         - "e1"
         - "c1"
