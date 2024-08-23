@@ -20,6 +20,7 @@ vars: # 全局变量
   modelCache: modelsce-mirror-modelsce-mirror-txpzbgwcck.{{ region }}-vpc.fcapp.run
   subModelFile: {{ subModelFile }}
   templateFile: {{ templateFile }}
+  modelBackend: {{ modelBackend }}
 resources:
   model_cache:
     component: 'fc3'
@@ -67,6 +68,7 @@ resources:
         IMAGE_TAG: ${vars.version}
         SUB_MODEL_FILE: ${vars.subModelFile}
         TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/${vars.templateFile}
+        MODEL_BACKEND: ${vars.modelBackend}
 
   model_meta_func:
     component: 'fc3'
@@ -126,7 +128,7 @@ resources:
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-        command: {{ if imageTag === 'fc-deploy-common-v17.3.3' }}["python3", "-u", "/usr/src/app/app.py"]{{ else }}["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/run_deploy.sh; /bin/sh run_deploy.sh"]{{/if}}
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/deploy.tar; tar xvf deploy.tar; /bin/sh script/run_${vars.version}.sh"]
         port: 9000
       environmentVariables:
         MODEL_ID: ${vars.modelID}
@@ -138,6 +140,7 @@ resources:
         SUB_MODEL_FILE: ${vars.subModelFile}
         TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/${vars.templateFile}
         MODELSCOPE_DOMAIN: ${vars.modelCache}
+        MODEL_BACKEND: ${vars.modelBackend}
       triggers:
         - triggerName: httpTrigger
           triggerType: http
