@@ -1,4 +1,5 @@
-import os 
+import os
+import traceback
 from modelscope.hub.api import HubApi
 from modelscope.hub.snapshot_download import snapshot_download
 
@@ -12,10 +13,19 @@ def handler(event, context):
     template_file_url = os.getenv('TEMPLATE_FILE_URL', '')
 
     # login first.
-    HubApi().login(sdk_token)
+    try:
+        # model cache url
+        api = HubApi()
+        api.login(sdk_token)
+    except BaseException as e:
+        print(f'[INFO] Download model from www.modelscope.cn, cache failed: {e}, {traceback.print_exc()}')
+        os.environ['MODELSCOPE_DOMAIN'] = 'www.modelscope.cn'
+        api = HubApi()
+        api.login(sdk_token)
+
     if image_tag == 'fc-deploy-common-v17.3.3':
         if len(revision) > 0:
-            snapshot_download (model_id =model_id, 
+            snapshot_download (model_id =model_id,
                             revision =revision,
                             cache_dir = cache_dir)
         else:
@@ -26,9 +36,13 @@ def handler(event, context):
         os.system('pip config set global.index-url https://mirrors.cloud.aliyuncs.com/pypi/simple')
         os.system('pip config set install.trusted-host mirrors.cloud.aliyuncs.com')
         os.system('pip install --default-timeout=100 modelscope==1.16')
-        command_download_ollama = f'modelscope download --model=modelscope/ollama-linux --local_dir {cache_dir}/ollama-linux'
-        os.system(command_download_ollama)
 
+        # using latest ollama
+        print('[INFO] Downloading and installing the latest ollama. ')
+        latest_ollama = api.list_model_revisions(model_id='modelscope/ollama-linux')[0]
+        os.system(f'modelscope download --model=modelscope/ollama-linux --local_dir {cache_dir}/ollama-linux --revision {latest_ollama}')
+
+        print(f'[INFO] Downloading model file. ')
         command_download_model = f'modelscope download --model={model_id} --local_dir {cache_dir} {sub_model_file}'
         os.system(command_download_model)
 
@@ -41,9 +55,13 @@ def handler(event, context):
 
         with open('/home/modelfile', 'r') as f_in, open('/home/ModelFile', 'w') as f_out:
             lines = f_in.readlines()
-            assert lines[0].strip() == 'FROM {gguf_file}', '请不要修改配置文件第一行 `FROM {gguf_file}`。'
-            lines[0] = lines[0].replace('{gguf_file}', f'{sub_model_file}')
+            if not len(lines):
+                print(f'[ERROR] Failed to download {template_file_url}.')
+            lines[0] = 'FROM {gguf_file}\n'.replace('{gguf_file}', f'{sub_model_file}')
+            print(f'[INFO] modelfile:\n{lines}')
             f_out.writelines(lines)
+
+        print('[INFO] Create the model with ollama in advance and cache it.')
 
         os.system(f'OLLAMA_HOST=0.0.0.0:9000 ollama create {model_id} --file /home/ModelFile')
 
