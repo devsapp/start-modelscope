@@ -76,7 +76,7 @@ resources:
       functionName: ${vars.name}-model-meta-func
       description: Meta Api
       handler: not-used
-      timeout: 1800
+      timeout: 86400
       memorySize: 32768
       cpu: 8
       diskSize: 512
@@ -110,7 +110,7 @@ resources:
       functionName: ${vars.name}-model-app-func
       description: Deploy ModelScope applications of model
       handler: not-used
-      timeout: 1800
+      timeout: 86400
       memorySize: ${vars.memorySize}
       cpu: 8
       diskSize: 10240
