@@ -40,7 +40,8 @@ def handler(event, context):
 
         # using latest ollama
         print('[INFO] Downloading and installing the latest ollama. ')
-        latest_ollama = api.list_model_revisions(model_id='modelscope/ollama-linux')[0]
+        # latest_ollama = api.list_model_revisions(model_id='modelscope/ollama-linux')[0]
+        latest_ollama = 'v0.3.6'
         os.system(f'modelscope download --model=modelscope/ollama-linux --local_dir {cache_dir}/ollama-linux --revision {latest_ollama}')
 
         print(f'[INFO] Downloading model file. ')
