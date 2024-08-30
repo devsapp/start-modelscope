@@ -12,7 +12,7 @@ vars: # 全局变量
   role: {{ roleArn }}
   instanceType: {{ instanceType }}
   gpuMemorySize: {{ if instanceType == 'c1' || instanceType == 'e1' }}0{{else if gpuMemorySize == '0'}}16384{{else}}{{ gpuMemorySize }}{{/if}}
-  memorySize: {{ memorySize }}
+  memorySize: {{ if memorySize == '0' }}32768{{else}}{{ memorySize }}{{/if}}
   modelID: {{ modelId }}
   modelRevision: {{ modelRevision }}
   modelTask: {{ modelTask }}
