@@ -82,17 +82,23 @@ resources:
       memorySize: 32768
       cpu: 8
       diskSize: 512
-      gpuConfig:
-        gpuMemorySize: 16384
-        gpuType: fc.gpu.tesla.1
       instanceConcurrency: 1
-      runtime: custom-container
+      runtime: python3.9
+      code: ./model_meta
       internetAccess: true
-      customContainerConfig:
-        image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-        port: 9000
+      initializer: 'true'
       environmentVariables:
-        MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}
+        MODEL_ID: ${vars.modelID}
+        MODEL_VERSION: ${vars.modelRevision}
+        TASK: ${vars.modelTask}
+        PATH: /opt/python3.9/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
+        PYTHONPATH: /opt/python
+      customRuntimeConfig:
+        command:
+          - python3.9
+        args:
+          - "app.py"
+        port: 9000
       triggers:
         - triggerName: httpTrigger
           triggerType: http
