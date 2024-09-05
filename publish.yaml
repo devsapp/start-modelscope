@@ -117,7 +117,7 @@ Parameters:
       title: 模型后端
       type: string
       default: "ollama"
-      description: 模型运行使用的后端，当前仅支持选择ollama、pipeline。由于当前部分模型支持以pipeline的方式拉起，另一部分支持ollama。该配置为后续扩展至vllm、lmdeploy提前设定，现在配置无效。
+      description: 模型运行使用的后端，当前仅支持选择ollama、pipeline。
       enum:
         - "ollama"
         - "pipeline"

@@ -11,6 +11,7 @@ def handler(event, context):
     image_tag = os.getenv('IMAGE_TAG', '')
     sub_model_file = os.getenv('SUB_MODEL_FILE', '')
     template_file_url = os.getenv('TEMPLATE_FILE_URL', '')
+    backend = os.getenv('MODEL_BACKEND', 'pipeline')
 
     # login first.
     try:
@@ -23,7 +24,7 @@ def handler(event, context):
         api = HubApi()
         api.login(sdk_token)
 
-    if image_tag == 'fc-deploy-common-v17.3.3':
+    if backend == 'pipeline':
         if len(revision) > 0:
             snapshot_download (model_id =model_id,
                             revision =revision,
