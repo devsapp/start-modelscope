@@ -77,13 +77,14 @@ resources:
       role: ${vars.role}
       functionName: ${vars.name}-model-meta-func
       description: Meta Api
-      handler: not-used
+      handler: index.handler
       timeout: 86400
       memorySize: 32768
       cpu: 8
-      diskSize: 512
+      instanceType: e1
+      diskSize: 10240
       instanceConcurrency: 1
-      runtime: python3.9
+      runtime: custom.debian10
       code: ./model_meta
       internetAccess: true
       initializer: 'true'
@@ -99,6 +100,9 @@ resources:
         args:
           - "app.py"
         port: 9000
+      layers:
+        - acs:fc:${vars.region}:official:layers/Python39/versions/2
+        - acs:fc:${vars.region}:1431999136518149:layers/Python39-Gradio/versions/1
       triggers:
         - triggerName: httpTrigger
           triggerType: http
@@ -134,7 +138,7 @@ resources:
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/deploy.tar; tar xvf deploy.tar; /bin/sh script/run_${vars.version}.sh"]
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/deploy.tar; tar xvf deploy.tar; /bin/sh script/run_${vars.modelBackend}.sh"]
         port: 9000
       environmentVariables:
         MODEL_ID: ${vars.modelID}

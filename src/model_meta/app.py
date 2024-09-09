@@ -1,6 +1,10 @@
 import os
 import json
 
+os.system('pip config set global.index-url https://mirrors.cloud.aliyuncs.com/pypi/simple')
+os.system('pip config set install.trusted-host mirrors.cloud.aliyuncs.com')
+os.system('pip3 install flask')
+
 from flask import Flask, request
 
 
