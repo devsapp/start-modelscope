@@ -131,3 +131,8 @@ Parameters:
       type: string
       default: "llm_template/ollama/gemma2.modelfile"
       description: 模型时所需的模型template文件的链接，使用ollama启动时为必须参数。其中gguf路径应以{gguf_file}表示，在执行时会被替换成容器内真实可访问的路径。
+    deployEnv:
+      titile: 部署推理环境变量
+      type: string
+      default: '{}'
+      description: 部署推理时额外的环境变量，配置为可被json.loads的string。如backend为ollama时，配置deployEnv='{"OLLAMA_NUM_PARALLEL":4}'可实现并行度为4的部署。

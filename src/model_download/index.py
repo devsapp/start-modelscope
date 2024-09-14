@@ -1,5 +1,10 @@
 import os
 import traceback
+
+os.system('pip config set global.index-url https://mirrors.cloud.aliyuncs.com/pypi/simple')
+os.system('pip config set install.trusted-host mirrors.cloud.aliyuncs.com')
+os.system('pip install --default-timeout=100 --upgrade modelscope')
+
 from modelscope.hub.api import HubApi
 from modelscope.hub.snapshot_download import snapshot_download
 
@@ -8,7 +13,6 @@ def handler(event, context):
     revision = os.getenv('MODEL_VERSION', '')
     cache_dir = os.getenv('MODELSCOPE_CACHE', '')
     sdk_token = os.getenv('MODELSCOPE_TOKEN', '')
-    image_tag = os.getenv('IMAGE_TAG', '')
     sub_model_file = os.getenv('SUB_MODEL_FILE', '')
     template_file_url = os.getenv('TEMPLATE_FILE_URL', '')
     backend = os.getenv('MODEL_BACKEND', 'pipeline')
@@ -34,10 +38,6 @@ def handler(event, context):
                                 cache_dir = cache_dir)
         print("download model scuccess!")
     else:
-        os.system('pip config set global.index-url https://mirrors.cloud.aliyuncs.com/pypi/simple')
-        os.system('pip config set install.trusted-host mirrors.cloud.aliyuncs.com')
-        os.system('pip install --default-timeout=100 modelscope==1.16')
-
         # using latest ollama
         print('[INFO] Downloading and installing the latest ollama. ')
         # latest_ollama = api.list_model_revisions(model_id='modelscope/ollama-linux')[0]
