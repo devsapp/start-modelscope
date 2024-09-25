@@ -124,7 +124,7 @@ resources:
       handler: not-used
       timeout: 86400
       memorySize: ${vars.memorySize}
-      cpu: 8
+      cpu: {{ if instanceType == 'fc.gpu.tesla.1' }}4{{ else }}8{{ /if }}
       diskSize: 10240
       {{ if instanceType != 'c1' && instanceType != 'e1' }}gpuConfig:
         gpuMemorySize: ${vars.gpuMemorySize}
