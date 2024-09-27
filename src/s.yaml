@@ -21,7 +21,7 @@ vars: # 全局变量
   subModelFile: {{ subModelFile }}
   templateFile: {{ templateFile }}
   modelBackend: {{ modelBackend }}
-  deployEnv: {{ deployEnv }}
+  deployEnv: '{{ deployEnv }}'
 resources:
   model_cache:
     component: 'fc3'
