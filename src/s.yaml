@@ -21,6 +21,7 @@ vars: # 全局变量
   subModelFile: {{ subModelFile }}
   templateFile: {{ templateFile }}
   modelBackend: {{ modelBackend }}
+  deployEnv: {{ deployEnv }}
 resources:
   model_cache:
     component: 'fc3'
@@ -138,7 +139,7 @@ resources:
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: {{ if imageTag == 'ubuntu22.04-cuda12.1.0-py310-torch2.3.0-tf2.16.1-1.16.0-fc' || imageTag == 'ubuntu22.04-py310-torch2.3.0-1.16.0-fc' || iamgeTag == 'ubuntu22.04-cuda12.1.0-py310-torch2.3.0-tf2.16.1-1.16.0based-1.18.1-fc' || imageTag == 'fc-deploy-common-v17.3.3'}}registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}{{ else }}modelscope-registry.${vars.region}.cr.aliyuncs.com/modelscope-repo/modelscope:${vars.version}{{/if}}
-        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/deploy.tar; tar xvf deploy.tar; /bin/sh script/run_${vars.modelBackend}.sh"]
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_${vars.modelBackend}.sh"]
         port: 9000
       environmentVariables:
         MODEL_ID: ${vars.modelID}
@@ -151,6 +152,7 @@ resources:
         TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/${vars.templateFile}
         MODELSCOPE_DOMAIN: ${vars.modelCache}
         MODEL_BACKEND: ${vars.modelBackend}
+        DEPLOY_ENV: '${vars.deployEnv}'
       triggers:
         - triggerName: httpTrigger
           triggerType: http
