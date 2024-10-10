@@ -11,7 +11,7 @@ vars: # 全局变量
   name: {{ name }}
   role: {{ roleArn }}
   instanceType: {{ instanceType }}
-  gpuMemorySize: {{ if instanceType == 'c1' || instanceType == 'e1' }}0{{else if gpuMemorySize == '0'}}16384{{else}}{{ gpuMemorySize }}{{/if}}
+  gpuMemorySize: {{ if instanceType == 'c1' || instanceType == 'e1' }}0{{else if instanceType == 'fc.gpu.tesla.1'}}16384{{else if instanceType == 'fc.gpu.ada.1'}}49152{{else}}{{ gpuMemorySize }}{{/if}}
   memorySize: {{ if memorySize == '0' }}32768{{else}}{{ memorySize }}{{/if}}
   modelID: {{ modelId }}
   modelRevision: {{ modelRevision }}
