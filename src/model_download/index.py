@@ -1,4 +1,5 @@
 import os
+import time
 import traceback
 
 os.system('pip config set global.index-url https://mirrors.cloud.aliyuncs.com/pypi/simple')
@@ -28,15 +29,24 @@ def handler(event, context):
         api = HubApi()
         api.login(sdk_token)
 
+    model_download_retry = 3
     if backend == 'pipeline':
-        if len(revision) > 0:
-            snapshot_download (model_id =model_id,
-                            revision =revision,
-                            cache_dir = cache_dir)
-        else:
-            snapshot_download (model_id =model_id, 
-                                cache_dir = cache_dir)
-        print("download model scuccess!")
+        for i in range(model_download_retry):
+            try:
+                if len(revision) > 0:
+                    snapshot_download (model_id =model_id,
+                                    revision =revision,
+                                    cache_dir = cache_dir)
+                else:
+                    snapshot_download (model_id =model_id,
+                                        cache_dir = cache_dir)
+                print("[INFO] Download model success!")
+                break
+            except BaseException as e:
+                print(f'[WARNING] Model download failed, retry: {i}/{model_download_retry-1}. Detail: {e}')
+                if i <= model_download_retry-1:
+                    time.sleep(0.5)
+
     else:
         # using latest ollama
         print('[INFO] Downloading and installing the latest ollama. ')
@@ -67,4 +77,4 @@ def handler(event, context):
 
         os.system(f'OLLAMA_HOST=0.0.0.0:9000 ollama create {model_id} --file /home/ModelFile')
 
-        print("download model scuccess!")
+        print("[INFO] Download model success!")
