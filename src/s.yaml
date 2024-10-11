@@ -130,7 +130,7 @@ resources:
       {{ if instanceType != 'c1' && instanceType != 'e1' }}gpuConfig:
         gpuMemorySize: ${vars.gpuMemorySize}
         gpuType: ${vars.instanceType}{{ else }}instanceType: ${vars.instanceType}{{ /if }}
-      instanceConcurrency: 1
+      instanceConcurrency: 4
       runtime: custom-container
       initializer: 'true'
       initializationTimeout: 300
