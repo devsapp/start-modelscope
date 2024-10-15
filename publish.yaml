@@ -95,12 +95,12 @@ Parameters:
       title: 模型运行实例类型
       type: string
       default: "fc.gpu.tesla.1"
-      description: 请谨慎修改！修改时遵循：\n  1.预选为CPU时，请勿在此切换为GPU实例。反之亦然。（如：预配了CPU镜像环境，在此切换为GPU机器会由于环境无cuda，造成GPU无法使用的浪费）\n  2.修改为配置更低的硬件存在失败风险（如：显存或内存变小后，无法加载模型）。\n模型运行实例类型：e1（CPU 弹性实例）、c1（CPU 性能实例）、fc.gpu.tesla.1（GPU T4实例）、fc.gpu.ampere.1（GPU A10实例：当前A10资源较为紧张）
+      description: 请谨慎修改！修改时遵循：\n  1.预选为CPU时，请勿在此切换为GPU实例。反之亦然。（如：预配了CPU镜像环境，在此切换为GPU机器会由于环境无cuda，造成GPU无法使用的浪费）\n  2.修改为配置更低的硬件存在失败风险（如：显存或内存变小后，无法加载模型）。\n模型运行实例类型：e1（CPU 弹性实例）、c1（CPU 性能实例）、fc.gpu.tesla.1（GPU T4实例）、fc.gpu.ada.1（GPU ada系列）
       enum:
         - "e1"
         - "c1"
         - "fc.gpu.tesla.1"
-        - "fc.gpu.ampere.1"
+        - "fc.gpu.ada.1"
     gpuMemorySize:
       title: 显存大小
       type: string
@@ -117,7 +117,7 @@ Parameters:
       title: 模型后端
       type: string
       default: "ollama"
-      description: 模型运行使用的后端，当前仅支持选择ollama、pipeline。由于当前部分模型支持以pipeline的方式拉起，另一部分支持ollama。该配置为后续扩展至vllm、lmdeploy提前设定，现在配置无效。
+      description: 模型运行使用的后端，当前仅支持选择ollama、pipeline。
       enum:
         - "ollama"
         - "pipeline"
@@ -131,3 +131,8 @@ Parameters:
       type: string
       default: "llm_template/ollama/gemma2.modelfile"
       description: 模型时所需的模型template文件的链接，使用ollama启动时为必须参数。其中gguf路径应以{gguf_file}表示，在执行时会被替换成容器内真实可访问的路径。
+    deployEnv:
+      title: 部署推理环境变量
+      type: string
+      default: '{}'
+      description: 部署推理时额外的环境变量，配置为可被json.loads的string。如backend为ollama时，配置deployEnv='{"OLLAMA_NUM_PARALLEL":4}'可实现并行度为4的部署。

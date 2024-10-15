@@ -1,5 +1,11 @@
 import os
+import time
 import traceback
+
+os.system('pip config set global.index-url https://mirrors.cloud.aliyuncs.com/pypi/simple')
+os.system('pip config set install.trusted-host mirrors.cloud.aliyuncs.com')
+os.system('pip install --default-timeout=100 --upgrade modelscope')
+
 from modelscope.hub.api import HubApi
 from modelscope.hub.snapshot_download import snapshot_download
 
@@ -8,9 +14,9 @@ def handler(event, context):
     revision = os.getenv('MODEL_VERSION', '')
     cache_dir = os.getenv('MODELSCOPE_CACHE', '')
     sdk_token = os.getenv('MODELSCOPE_TOKEN', '')
-    image_tag = os.getenv('IMAGE_TAG', '')
     sub_model_file = os.getenv('SUB_MODEL_FILE', '')
     template_file_url = os.getenv('TEMPLATE_FILE_URL', '')
+    backend = os.getenv('MODEL_BACKEND', 'pipeline')
 
     # login first.
     try:
@@ -23,20 +29,25 @@ def handler(event, context):
         api = HubApi()
         api.login(sdk_token)
 
-    if image_tag == 'fc-deploy-common-v17.3.3':
-        if len(revision) > 0:
-            snapshot_download (model_id =model_id,
-                            revision =revision,
-                            cache_dir = cache_dir)
-        else:
-            snapshot_download (model_id =model_id, 
-                                cache_dir = cache_dir)
-        print("download model scuccess!")
-    else:
-        os.system('pip config set global.index-url https://mirrors.cloud.aliyuncs.com/pypi/simple')
-        os.system('pip config set install.trusted-host mirrors.cloud.aliyuncs.com')
-        os.system('pip install --default-timeout=100 modelscope==1.16')
+    model_download_retry = 3
+    if backend == 'pipeline':
+        for i in range(model_download_retry):
+            try:
+                if len(revision) > 0:
+                    snapshot_download (model_id =model_id,
+                                    revision =revision,
+                                    cache_dir = cache_dir)
+                else:
+                    snapshot_download (model_id =model_id,
+                                        cache_dir = cache_dir)
+                print("[INFO] Download model success!")
+                break
+            except BaseException as e:
+                print(f'[WARNING] Model download failed, retry: {i}/{model_download_retry-1}. Detail: {e}')
+                if i <= model_download_retry-1:
+                    time.sleep(0.5)
 
+    else:
         # using latest ollama
         print('[INFO] Downloading and installing the latest ollama. ')
         # latest_ollama = api.list_model_revisions(model_id='modelscope/ollama-linux')[0]
@@ -66,4 +77,4 @@ def handler(event, context):
 
         os.system(f'OLLAMA_HOST=0.0.0.0:9000 ollama create {model_id} --file /home/ModelFile')
 
-        print("download model scuccess!")
+        print("[INFO] Download model success!")

@@ -11,8 +11,8 @@ vars: # 全局变量
   name: {{ name }}
   role: {{ roleArn }}
   instanceType: {{ instanceType }}
-  gpuMemorySize: {{ if instanceType == 'c1' || instanceType == 'e1' }}0{{else if gpuMemorySize == '0'}}16384{{else}}{{ gpuMemorySize }}{{/if}}
-  memorySize: {{ if memorySize == '0' }}32768{{else}}{{ memorySize }}{{/if}}
+  gpuMemorySize: {{ if instanceType == 'c1' || instanceType == 'e1' }}0{{else if instanceType == 'fc.gpu.tesla.1'}}16384{{else if instanceType == 'fc.gpu.ada.1'}}49152{{else}}{{ gpuMemorySize }}{{/if}}
+  memorySize: {{ if memorySize == '0' }}32768{{ else if instanceType == 'fc.gpu.ada.1' }}65536{{else}}{{ memorySize }}{{/if}}
   modelID: {{ modelId }}
   modelRevision: {{ modelRevision }}
   modelTask: {{ modelTask }}
@@ -20,6 +20,8 @@ vars: # 全局变量
   modelCache: modelsce-mirror-modelsce-mirror-txpzbgwcck.{{ region }}-vpc.fcapp.run
   subModelFile: {{ subModelFile }}
   templateFile: {{ templateFile }}
+  modelBackend: {{ modelBackend }}
+  deployEnv: '{{ deployEnv }}'
 resources:
   model_cache:
     component: 'fc3'
@@ -67,6 +69,7 @@ resources:
         IMAGE_TAG: ${vars.version}
         SUB_MODEL_FILE: ${vars.subModelFile}
         TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/${vars.templateFile}
+        MODEL_BACKEND: ${vars.modelBackend}
 
   model_meta_func:
     component: 'fc3'
@@ -75,22 +78,32 @@ resources:
       role: ${vars.role}
       functionName: ${vars.name}-model-meta-func
       description: Meta Api
-      handler: not-used
+      handler: index.handler
       timeout: 86400
       memorySize: 32768
       cpu: 8
-      diskSize: 512
-      gpuConfig:
-        gpuMemorySize: 16384
-        gpuType: fc.gpu.tesla.1
+      instanceType: e1
+      diskSize: 10240
       instanceConcurrency: 1
-      runtime: custom-container
+      runtime: custom.debian10
+      code: ./model_meta
       internetAccess: true
-      customContainerConfig:
-        image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-        port: 9000
+      initializer: 'true'
       environmentVariables:
-        MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}
+        MODEL_ID: ${vars.modelID}
+        MODEL_VERSION: ${vars.modelRevision}
+        TASK: ${vars.modelTask}
+        PATH: /opt/python3.9/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
+        PYTHONPATH: /opt/python
+      customRuntimeConfig:
+        command:
+          - python3.9
+        args:
+          - "app.py"
+        port: 9000
+      layers:
+        - acs:fc:${vars.region}:official:layers/Python39/versions/2
+        - acs:fc:${vars.region}:1431999136518149:layers/Python39-Gradio/versions/1
       triggers:
         - triggerName: httpTrigger
           triggerType: http
@@ -112,12 +125,12 @@ resources:
       handler: not-used
       timeout: 86400
       memorySize: ${vars.memorySize}
-      cpu: 8
+      cpu: {{ if instanceType == 'fc.gpu.tesla.1' }}4{{ else }}8{{ /if }}
       diskSize: 10240
       {{ if instanceType != 'c1' && instanceType != 'e1' }}gpuConfig:
         gpuMemorySize: ${vars.gpuMemorySize}
         gpuType: ${vars.instanceType}{{ else }}instanceType: ${vars.instanceType}{{ /if }}
-      instanceConcurrency: 1
+      instanceConcurrency: 4
       runtime: custom-container
       initializer: 'true'
       initializationTimeout: 300
@@ -125,8 +138,8 @@ resources:
       vpcConfig: ${resources.model_cache.output.vpcConfig}
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
-        image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-        command: {{ if imageTag === 'fc-deploy-common-v17.3.3' }}["python3", "-u", "/usr/src/app/app.py"]{{ else }}["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/run_deploy.sh; /bin/sh run_deploy.sh"]{{/if}}
+        image: {{ if imageTag == 'ubuntu22.04-cuda12.1.0-py310-torch2.3.0-tf2.16.1-1.16.0-fc' || imageTag == 'ubuntu22.04-py310-torch2.3.0-1.16.0-fc' || imageTag == 'ubuntu22.04-cuda12.1.0-py310-torch2.3.0-tf2.16.1-1.16.0based-1.18.1-fc' || imageTag == 'fc-deploy-common-v17.3.3'}}registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}{{ else }}modelscope-registry.${vars.region}.cr.aliyuncs.com/modelscope-repo/modelscope:${vars.version}{{/if}}
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_${vars.modelBackend}.sh"]
         port: 9000
       environmentVariables:
         MODEL_ID: ${vars.modelID}
@@ -138,6 +151,8 @@ resources:
         SUB_MODEL_FILE: ${vars.subModelFile}
         TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/${vars.templateFile}
         MODELSCOPE_DOMAIN: ${vars.modelCache}
+        MODEL_BACKEND: ${vars.modelBackend}
+        DEPLOY_ENV: '${vars.deployEnv}'
       triggers:
         - triggerName: httpTrigger
           triggerType: http
