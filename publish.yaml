@@ -101,6 +101,7 @@ Parameters:
         - "c1"
         - "fc.gpu.tesla.1"
         - "fc.gpu.ada.1"
+        - "fc.gpu.ampere.1"
     gpuMemorySize:
       title: 显存大小
       type: string
