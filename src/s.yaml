@@ -60,8 +60,9 @@ resources:
       vpcConfig: ${resources.model_cache.output.vpcConfig}
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
-        image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:model_download-0.0.2
-        port: 9000
+        image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:ubuntu22.04-py310-torch2.3.0-1.16.0-fc
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/pre/download.tar; tar xvf download.tar; /bin/bash model_download/download.sh"]
+        port: 9001
       environmentVariables:
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
