@@ -48,18 +48,21 @@ resources:
       role: ${vars.role}
       functionName: ${vars.name}-model-download-func
       description: initialize model into nas storage
-      handler: index.handler
+      handler: not-used
       timeout: 86400
       memorySize: 16384
       cpu: 8
       diskSize: 10240
       instanceType: e1
       instanceConcurrency: 1
-      runtime: python3.9
-      code: ./model_download
+      runtime: custom-container
       internetAccess: true
       vpcConfig: ${resources.model_cache.output.vpcConfig}
       nasConfig: ${resources.model_cache.output.nasConfig}
+      customContainerConfig:
+        image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:ubuntu22.04-py310-torch2.3.0-1.16.0-fc
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/download.tar; tar xvf download.tar; /bin/bash model_download/download.sh"]
+        port: 9001
       environmentVariables:
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
@@ -130,7 +133,7 @@ resources:
       {{ if instanceType != 'c1' && instanceType != 'e1' }}gpuConfig:
         gpuMemorySize: ${vars.gpuMemorySize}
         gpuType: ${vars.instanceType}{{ else }}instanceType: ${vars.instanceType}{{ /if }}
-      instanceConcurrency: 4
+      instanceConcurrency: 5
       runtime: custom-container
       initializer: 'true'
       initializationTimeout: 300
@@ -138,7 +141,7 @@ resources:
       vpcConfig: ${resources.model_cache.output.vpcConfig}
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
-        image: {{ if imageTag == 'ubuntu22.04-cuda12.1.0-py310-torch2.3.0-tf2.16.1-1.16.0-fc' || imageTag == 'ubuntu22.04-py310-torch2.3.0-1.16.0-fc' || imageTag == 'ubuntu22.04-cuda12.1.0-py310-torch2.3.0-tf2.16.1-1.16.0based-1.18.1-fc' || imageTag == 'fc-deploy-common-v17.3.3'}}registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}{{ else }}modelscope-registry.${vars.region}.cr.aliyuncs.com/modelscope-repo/modelscope:${vars.version}{{/if}}
+        image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
         command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_${vars.modelBackend}.sh"]
         port: 9000
       environmentVariables:
