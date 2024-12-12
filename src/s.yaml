@@ -22,6 +22,11 @@ vars: # 全局变量
   templateFile: {{ templateFile }}
   modelBackend: {{ modelBackend }}
   deployEnv: '{{ deployEnv }}'
+  servedModelName: {{ if servedModelName == '' }}{{modelId}}{{else}}{{servedModelName}}{{/if}}
+  nasMountAddr: {{ nasMountAddr }}
+  vpcId: {{ vpcId }}
+  securityGroupId: {{ securityGroupId }}
+  vSwitchIds: {{ vSwitchIds }}
 resources:
   model_cache:
     component: 'fc3'
@@ -34,8 +39,19 @@ resources:
       instanceType: e1
       runtime: python3.9
       code: ./model_cache
-      vpcConfig: auto
-      nasConfig: auto
+      {{ if nasMountAddr != '' }}vpcConfig:
+        vpcId: ${vars.vpcId}
+        securityGroupId: ${vars.securityGroupId}
+        vSwitchIds:
+          - ${vars.vSwitchIds}
+      nasConfig:
+        groupId: 0
+        userId: 0
+        mountPoints:
+          - serverAddr: ${vars.nasMountAddr}
+            mountDir: /mnt/cache
+            enableTLS: false{{ else }}vpcConfig: auto
+      nasConfig: auto{{ /if }}
 
   model_download_func:
     component: 'fc3'
@@ -73,6 +89,7 @@ resources:
         SUB_MODEL_FILE: ${vars.subModelFile}
         TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/${vars.templateFile}
         MODEL_BACKEND: ${vars.modelBackend}
+        SERVED_MODEL_NAME: ${vars.servedModelName}
 
   model_meta_func:
     component: 'fc3'

@@ -136,3 +136,28 @@ Parameters:
       type: string
       default: '{}'
       description: 部署推理时额外的环境变量，配置为可被json.loads的string。如backend为ollama时，配置deployEnv='{"OLLAMA_NUM_PARALLEL":4}'可实现并行度为4的部署。
+    servedModelName:
+      title: 部署后用于调用的模型名
+      type: string
+      default: ''
+      description: 部署后用于调用的模型名
+    nasMountAddr:
+      title: nas挂载地址
+      type: string
+      default: ''
+      description: nas挂载地址，用于模型下载的缓存和转换；不配置时会自动初始化或挂载已有的nas及其所需的网络等配置。nas所在区域应与region完全一致。例如：0625xxxxxx-xxxxx.cn-hangzhou.nas.aliyuncs.com:/deploy
+    vpcId:
+      title: vpc专用网络id
+      type: string
+      default: ''
+      description: nas所在的专用网络id，nasMountAddr为空时不会被取用。
+    securityGroupId:
+      title:
+      type: string
+      default: ''
+      description: nas所在专用网络的安全组id，nasMountAddr为空时不会被取用。
+    vSwitchIds:
+      title:
+      type: string
+      default: ''
+      description: nas所在专用网络的交换机id，nasMountAddr为空时不会被取用。
