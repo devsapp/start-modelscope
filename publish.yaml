@@ -140,7 +140,7 @@ Parameters:
       title: 部署后用于调用的模型名
       type: string
       default: ''
-      description: 部署后用于调用的模型名
+      description: 部署后用于调用的模型名；同一个gguf文件变更模型名时，需要配置refresh=1，否则会失败。
     nasMountAddr:
       title: nas挂载地址
       type: string
@@ -163,6 +163,9 @@ Parameters:
       description: nas所在专用网络的交换机id，nasMountAddr为空时不会被取用。
     refresh:
       title: 刷新缓存
-      type: bool
-      default: 0
+      type: string
+      default: '0'
       description: 不使用缓存；并以此次部署配置为准，覆盖原有缓存
+      enum:
+        - '1'
+        - '0'
