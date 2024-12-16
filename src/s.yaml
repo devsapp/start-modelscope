@@ -27,6 +27,7 @@ vars: # 全局变量
   vpcId: {{ vpcId }}
   securityGroupId: {{ securityGroupId }}
   vSwitchIds: {{ vSwitchIds }}
+  refresh: {{ refresh }}
 resources:
   model_cache:
     component: 'fc3'
@@ -77,10 +78,9 @@ resources:
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:ubuntu22.04-py310-torch2.3.0-1.16.0-fc
-        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/pre/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_deploy.sh"]
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/pre/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_download.sh"]
         port: 9001
       environmentVariables:
-        FC_FUNC: download
         DEPLOY_PLATFORM: fc
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
@@ -92,6 +92,7 @@ resources:
         TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/${vars.templateFile}
         MODEL_BACKEND: ${vars.modelBackend}
         SERVED_MODEL_NAME: ${vars.servedModelName}
+        REFRESH: ${vars.refresh}
 
   model_meta_func:
     component: 'fc3'
@@ -164,7 +165,7 @@ resources:
         command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/pre/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_deploy.sh"]
         port: 9000
       environmentVariables:
-        FC_FUNC: app
+        DEPLOY_PLATFORM: 'fc'
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
         MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}/
@@ -176,6 +177,7 @@ resources:
         MODELSCOPE_DOMAIN: ${vars.modelCache}
         MODEL_BACKEND: ${vars.modelBackend}
         DEPLOY_ENV: '${vars.deployEnv}'
+        REFRESH: ${vars.refresh}
       triggers:
         - triggerName: httpTrigger
           triggerType: http
