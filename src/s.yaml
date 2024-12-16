@@ -27,7 +27,7 @@ vars: # 全局变量
   vpcId: {{ vpcId }}
   securityGroupId: {{ securityGroupId }}
   vSwitchIds: {{ vSwitchIds }}
-  refresh: {{ refresh }}
+  refresh: '{{ refresh }}'
 resources:
   model_cache:
     component: 'fc3'
@@ -92,7 +92,7 @@ resources:
         TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/${vars.templateFile}
         MODEL_BACKEND: ${vars.modelBackend}
         SERVED_MODEL_NAME: ${vars.servedModelName}
-        REFRESH: ${vars.refresh}
+        REFRESH: '${vars.refresh}'
 
   model_meta_func:
     component: 'fc3'
@@ -177,7 +177,7 @@ resources:
         MODELSCOPE_DOMAIN: ${vars.modelCache}
         MODEL_BACKEND: ${vars.modelBackend}
         DEPLOY_ENV: '${vars.deployEnv}'
-        REFRESH: ${vars.refresh}
+        REFRESH: '${vars.refresh}'
       triggers:
         - triggerName: httpTrigger
           triggerType: http
