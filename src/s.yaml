@@ -36,6 +36,10 @@ resources:
       code: ./model_cache
       vpcConfig: auto
       nasConfig: auto
+      environmentVariables:
+        ALIBABA_CLOUD_ACCESS_KEY_ID: ''
+        ALIBABA_CLOUD_ACCESS_KEY_SECRET: ''
+        ALIBABA_CLOUD_SECURITY_TOKEN: ''
 
   model_download_func:
     component: 'fc3'
@@ -64,6 +68,9 @@ resources:
         command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/pre/download.tar; tar xvf download.tar; /bin/bash model_download/download.sh"]
         port: 9001
       environmentVariables:
+        ALIBABA_CLOUD_ACCESS_KEY_ID: ''
+        ALIBABA_CLOUD_ACCESS_KEY_SECRET: ''
+        ALIBABA_CLOUD_SECURITY_TOKEN: ''
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
         MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}
@@ -93,6 +100,9 @@ resources:
       internetAccess: true
       initializer: 'true'
       environmentVariables:
+        ALIBABA_CLOUD_ACCESS_KEY_ID: ''
+        ALIBABA_CLOUD_ACCESS_KEY_SECRET: ''
+        ALIBABA_CLOUD_SECURITY_TOKEN: ''
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
         TASK: ${vars.modelTask}
@@ -145,6 +155,9 @@ resources:
         command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/pre/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_${vars.modelBackend}.sh"]
         port: 9000
       environmentVariables:
+        ALIBABA_CLOUD_ACCESS_KEY_ID: ''
+        ALIBABA_CLOUD_ACCESS_KEY_SECRET: ''
+        ALIBABA_CLOUD_SECURITY_TOKEN: ''
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
         MODELSCOPE_CACHE: ${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}/
@@ -185,6 +198,9 @@ resources:
       instanceConcurrency: 100
       internetAccess: true
       environmentVariables:
+        ALIBABA_CLOUD_ACCESS_KEY_ID: ''
+        ALIBABA_CLOUD_ACCESS_KEY_SECRET: ''
+        ALIBABA_CLOUD_SECURITY_TOKEN: ''
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
         TASK: ${vars.modelTask}
@@ -219,6 +235,10 @@ resources:
       region: ${vars.region}
       domainName: auto
       protocol: HTTP
+      environmentVariables:
+        ALIBABA_CLOUD_ACCESS_KEY_ID: ''
+        ALIBABA_CLOUD_ACCESS_KEY_SECRET: ''
+        ALIBABA_CLOUD_SECURITY_TOKEN: ''
       routeConfig:
         routes:
           - functionName: ${resources.model_ui_func.props.functionName}
