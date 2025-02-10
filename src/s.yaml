@@ -208,6 +208,7 @@ resources:
         PATH: /opt/python3.9/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
         PYTHONPATH: /opt/python
         API_URL: ${resources.t_basic_func.output.url.system_url}
+        MODEL_BACKEND: ${vars.modelBackend}
       customRuntimeConfig:
         command:
           - python3.9
@@ -216,7 +217,7 @@ resources:
         port: 7860
       layers:
         - acs:fc:${vars.region}:official:layers/Python39/versions/2
-        - acs:fc:${vars.region}:1431999136518149:layers/Python39-Gradio/versions/1
+        - acs:fc:${vars.region}:1062703039352369:layers/Python39-GradioOpenAIPillow-v1/versions/1
       triggers:
         - triggerName: httpTrigger
           triggerType: http
