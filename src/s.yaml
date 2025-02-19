@@ -65,7 +65,7 @@ resources:
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:ubuntu22.04-py310-torch2.3.0-1.16.0-fc
-        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/download.tar; tar xvf download.tar; /bin/bash model_download/download.sh"]
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/pre/download.tar; tar xvf download.tar; /bin/bash model_download/download.sh"]
         port: 9001
       environmentVariables:
         ALIBABA_CLOUD_ACCESS_KEY_ID: ''
@@ -153,7 +153,7 @@ resources:
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_${vars.modelBackend}.sh"]
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/pre/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_${vars.modelBackend}.sh"]
         port: 9000
       environmentVariables:
         ALIBABA_CLOUD_ACCESS_KEY_ID: ''
