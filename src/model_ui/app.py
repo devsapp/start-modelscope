@@ -6,21 +6,30 @@ import requests
 import base64
 import random
 import time
+from openai import OpenAI
 
 
 ## global variables inherited from env
+OLLAMA_BACKEND = "ollama"
+
 demo = None
 model_id = os.getenv('MODEL_ID', '')
 model_revision = os.getenv('MODEL_VERSION', '')
 model_task = os.getenv('TASK', '')
 api_url = os.getenv('API_URL')
+model_backend = os.getenv('MODEL_BACKEND')
+path = "invoke"
+if model_backend == OLLAMA_BACKEND:
+    path = "v1"
+
+
 title = "魔搭社区x函数计算 : 一键部署模型"
 description = "本页面提供图形化方式调用部署后的魔搭模型，更多FAQ请见 [ModelScope一键部署模型：新手村实操FAQ篇](https://developer.aliyun.com/article/1307460?spm=5176.28261954.J_7341193060.1.43f42fdewvfTyq&scm=20140722.S_community@@%E6%96%87%E7%AB%A0@@1307460._.ID_1307460-RL_%E9%AD%94%E6%90%AD%20%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2-LOC_search~UND~community~UND~item-OR_ser-V_3-P0_0)"
 article = '''
 - 模型ID: [{}](https://www.modelscope.cn/models/{})
 - 模型版本: {}
 - 模型任务类型: {}
-- 模型推理URL: {}/invoke'''.format(model_id, model_id, model_revision, model_task, api_url)
+- 模型推理URL: {}/{}'''.format(model_id, model_id, model_revision, model_task, api_url, path)
 
 print("[debug] model_id=", model_id)
 print("[debug] model_revision=", model_revision)
@@ -32,7 +41,7 @@ if model_task == None or len(model_task) == 0:
 if api_url == None or len(api_url) == 0:
     gr.Warning("Missing necessary api url")
 else:
-    api_url += "/invoke"
+    api_url += f"/{path}"
 
 ## utils
 def post_request(url, json):
@@ -91,10 +100,28 @@ def text_generation_setup():
     def handler(text):
         if text == None or len(text) == 0:
             raise gr.Error("Missing necessary input text, please retry.")
-        payload = {"input": text}
-        response = post_request(api_url, json=payload)
-        print("response:", response.json())
-        return response.json()
+
+        if model_backend == OLLAMA_BACKEND:
+            client = OpenAI(
+                base_url=api_url,
+                api_key='ollama'
+            )
+
+            response=client.chat.completions.create(
+                model=model_id,
+                messages=[{"role":"user", "content":text}],
+                stream=True
+            )
+
+            full_response = ""
+            for chunk in response:
+                full_response += chunk.choices[0].delta.content
+                yield full_response
+        else:
+            payload = {"input": text}
+            response = post_request(api_url, json=payload)
+            print("response:", response.json())
+            return response.json()
     
     return gr.Interface(fn=handler,
                         inputs="text",
@@ -357,7 +384,9 @@ model_task_handlers = {
     "default" : default_setup,
 }
 
-if model_task_handlers.get(model_task) == None:
+if model_backend == OLLAMA_BACKEND:
+    demo = text_generation_setup()
+elif model_task_handlers.get(model_task) == None:
     demo = model_task_handlers["default"]()
 else:
     demo = model_task_handlers[model_task]()

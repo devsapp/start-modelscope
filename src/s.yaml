@@ -12,7 +12,7 @@ vars: # 全局变量
   role: {{ roleArn }}
   instanceType: {{ instanceType }}
   gpuMemorySize: {{ if instanceType == 'c1' || instanceType == 'e1' }}0{{else if instanceType == 'fc.gpu.tesla.1'}}16384{{else if instanceType == 'fc.gpu.ada.1'}}49152{{else}}{{ gpuMemorySize }}{{/if}}
-  memorySize: {{ if memorySize == '0' }}32768{{ else if instanceType == 'fc.gpu.ada.1' }}65536{{else}}{{ memorySize }}{{/if}}
+  memorySize: {{ if memorySize == '0' || instanceType == 'fc.gpu.tesla.1' }}32768{{ else if instanceType == 'fc.gpu.ada.1' }}65536{{else}}{{ memorySize }}{{/if}}
   modelID: {{ modelId }}
   modelRevision: {{ modelRevision }}
   modelTask: {{ modelTask }}
@@ -51,7 +51,8 @@ resources:
         mountPoints:
           - serverAddr: ${vars.nasMountAddr}
             mountDir: /mnt/cache
-            enableTLS: false{{ else }}vpcConfig: auto
+            enableTLS: false
+      {{ else }}vpcConfig: auto
       nasConfig: auto{{ /if }}
       environmentVariables:
         ALIBABA_CLOUD_ACCESS_KEY_ID: ''
@@ -162,7 +163,8 @@ resources:
       diskSize: 10240
       {{ if instanceType != 'c1' && instanceType != 'e1' }}gpuConfig:
         gpuMemorySize: ${vars.gpuMemorySize}
-        gpuType: ${vars.instanceType}{{ else }}instanceType: ${vars.instanceType}{{ /if }}
+        gpuType: ${vars.instanceType}
+      {{ else }}instanceType: ${vars.instanceType}{{ /if }}
       instanceConcurrency: 5
       runtime: custom-container
       initializer: 'true'
@@ -229,6 +231,7 @@ resources:
         PATH: /opt/python3.9/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin
         PYTHONPATH: /opt/python
         API_URL: ${resources.t_basic_func.output.url.system_url}
+        MODEL_BACKEND: ${vars.modelBackend}
       customRuntimeConfig:
         command:
           - python3.9
@@ -237,7 +240,7 @@ resources:
         port: 7860
       layers:
         - acs:fc:${vars.region}:official:layers/Python39/versions/2
-        - acs:fc:${vars.region}:1431999136518149:layers/Python39-Gradio/versions/1
+        - acs:fc:${vars.region}:1062703039352369:layers/Python39-GradioOpenAIPillow-v1/versions/1
       triggers:
         - triggerName: httpTrigger
           triggerType: http
