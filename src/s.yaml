@@ -40,20 +40,18 @@ resources:
       instanceType: e1
       runtime: python3.9
       code: ./model_cache
-      {{ if nasMountAddr != '' }}vpcConfig:
+      vpcConfig:{{ if nasMountAddr != '' }}
         vpcId: ${vars.vpcId}
         securityGroupId: ${vars.securityGroupId}
         vSwitchIds:
-          - ${vars.vSwitchIds}
-      nasConfig:
+          - ${vars.vSwitchIds}{{ else }} auto{{ /if }}
+      nasConfig:{{ if nasMountAddr != '' }}
         groupId: 0
         userId: 0
         mountPoints:
           - serverAddr: ${vars.nasMountAddr}
             mountDir: /mnt/cache
-            enableTLS: false
-      {{ else }}vpcConfig: auto
-      nasConfig: auto{{ /if }}
+            enableTLS: false{{ else }} auto{{ /if }}
       environmentVariables:
         ALIBABA_CLOUD_ACCESS_KEY_ID: ''
         ALIBABA_CLOUD_ACCESS_KEY_SECRET: ''
