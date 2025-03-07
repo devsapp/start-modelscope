@@ -136,11 +136,6 @@ Parameters:
       type: string
       default: '{}'
       description: 部署推理时额外的环境变量，配置为可被json.loads的string。如backend为ollama时，配置deployEnv='{"OLLAMA_NUM_PARALLEL":4}'可实现并行度为4的部署。
-    servedModelName:
-      title: 部署后用于调用的模型名
-      type: string
-      default: ''
-      description: 部署后用于调用的模型名，不配置时默认取用model_id；同一个gguf文件变更模型名时，需要配置refresh=1，否则会失败。
     nasMountAddr:
       title: nas挂载地址
       type: string

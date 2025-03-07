@@ -22,7 +22,7 @@ vars: # 全局变量
   templateFile: {{ templateFile }}
   modelBackend: {{ modelBackend }}
   deployEnv: '{{ deployEnv }}'
-  servedModelName: {{ if servedModelName == '' }}{{modelId}}{{else}}{{servedModelName}}{{/if}}
+  servedModelName: {{ modelId }}
   nasMountAddr: {{ nasMountAddr }}
   vpcId: {{ vpcId }}
   securityGroupId: {{ securityGroupId }}
@@ -70,7 +70,7 @@ resources:
       description: initialize model into nas storage
       handler: not-used
       timeout: 86400
-      memorySize: 16384
+      memorySize: 32768
       cpu: 8
       diskSize: 10240
       instanceType: e1
