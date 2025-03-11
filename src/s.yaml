@@ -22,6 +22,12 @@ vars: # 全局变量
   templateFile: {{ templateFile }}
   modelBackend: {{ modelBackend }}
   deployEnv: '{{ deployEnv }}'
+  servedModelName: {{ modelId }}
+  nasMountAddr: {{ nasMountAddr }}
+  vpcId: {{ vpcId }}
+  securityGroupId: {{ securityGroupId }}
+  vSwitchIds: {{ vSwitchIds }}
+  refresh: '{{ refresh }}'
 resources:
   model_cache:
     component: 'fc3'
@@ -34,8 +40,18 @@ resources:
       instanceType: e1
       runtime: python3.9
       code: ./model_cache
-      vpcConfig: auto
-      nasConfig: auto
+      vpcConfig:{{ if nasMountAddr != '' }}
+        vpcId: ${vars.vpcId}
+        securityGroupId: ${vars.securityGroupId}
+        vSwitchIds:
+          - ${vars.vSwitchIds}{{ else }} auto{{ /if }}
+      nasConfig:{{ if nasMountAddr != '' }}
+        groupId: 0
+        userId: 0
+        mountPoints:
+          - serverAddr: ${vars.nasMountAddr}
+            mountDir: /mnt/cache
+            enableTLS: false{{ else }} auto{{ /if }}
       environmentVariables:
         ALIBABA_CLOUD_ACCESS_KEY_ID: ''
         ALIBABA_CLOUD_ACCESS_KEY_SECRET: ''
@@ -54,7 +70,7 @@ resources:
       description: initialize model into nas storage
       handler: not-used
       timeout: 86400
-      memorySize: 16384
+      memorySize: 32768
       cpu: 8
       diskSize: 10240
       instanceType: e1
@@ -65,9 +81,10 @@ resources:
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:ubuntu22.04-py310-torch2.3.0-1.16.0-fc
-        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/download.tar; tar xvf download.tar; /bin/bash model_download/download.sh"]
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/pre/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_download.sh"]
         port: 9001
       environmentVariables:
+        DEPLOY_PLATFORM: fc
         ALIBABA_CLOUD_ACCESS_KEY_ID: ''
         ALIBABA_CLOUD_ACCESS_KEY_SECRET: ''
         ALIBABA_CLOUD_SECURITY_TOKEN: ''
@@ -80,6 +97,8 @@ resources:
         SUB_MODEL_FILE: ${vars.subModelFile}
         TEMPLATE_FILE_URL: https://modelscope.oss-cn-beijing.aliyuncs.com/${vars.templateFile}
         MODEL_BACKEND: ${vars.modelBackend}
+        SERVED_MODEL_NAME: ${vars.servedModelName}
+        REFRESH: '${vars.refresh}'
 
   model_meta_func:
     component: 'fc3'
@@ -153,9 +172,10 @@ resources:
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_${vars.modelBackend}.sh"]
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/pre/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_deploy.sh"]
         port: 9000
       environmentVariables:
+        DEPLOY_PLATFORM: 'fc'
         ALIBABA_CLOUD_ACCESS_KEY_ID: ''
         ALIBABA_CLOUD_ACCESS_KEY_SECRET: ''
         ALIBABA_CLOUD_SECURITY_TOKEN: ''
@@ -170,6 +190,7 @@ resources:
         MODELSCOPE_DOMAIN: ${vars.modelCache}
         MODEL_BACKEND: ${vars.modelBackend}
         DEPLOY_ENV: '${vars.deployEnv}'
+        REFRESH: '${vars.refresh}'
       triggers:
         - triggerName: httpTrigger
           triggerType: http

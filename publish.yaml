@@ -12,7 +12,7 @@ Type: Project
 Name: start-modelscope-v3
 Provider:
   - 阿里云 
-Version: 0.5.3
+Version: dev
 Description: ModelScope应用(fc3.0)
 HomePage: https://github.com/devsapp/start-modelscope-v3
 Tags:
@@ -136,3 +136,31 @@ Parameters:
       type: string
       default: '{}'
       description: 部署推理时额外的环境变量，配置为可被json.loads的string。如backend为ollama时，配置deployEnv='{"OLLAMA_NUM_PARALLEL":4}'可实现并行度为4的部署。
+    nasMountAddr:
+      title: nas挂载地址
+      type: string
+      default: ''
+      description: nas挂载地址，用于模型下载的缓存和转换；不配置时会自动初始化或挂载已有的nas及其所需的网络等配置。nas所在区域应与region完全一致。例如：0625xxxxxx-xxxxx.cn-hangzhou.nas.aliyuncs.com:/deploy
+    vpcId:
+      title: vpc专用网络id
+      type: string
+      default: ''
+      description: nas所在的专用网络id，nasMountAddr为空时不会被取用。
+    securityGroupId:
+      title: vpc安全组id
+      type: string
+      default: ''
+      description: nas所在专用网络的安全组id，nasMountAddr为空时不会被取用。
+    vSwitchIds:
+      title: vpc交换机id
+      type: string
+      default: ''
+      description: nas所在专用网络的交换机id，nasMountAddr为空时不会被取用。
+    refresh:
+      title: 刷新缓存
+      type: string
+      default: '0'
+      description: 配置为0时：如果此前部署过同一个模型文件，则直接复用不再重新下载转换；配置为1时：不使用缓存，并以此次部署配置为准，覆盖原有缓存
+      enum:
+        - '1'
+        - '0'
