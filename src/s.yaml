@@ -81,7 +81,7 @@ resources:
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:ubuntu22.04-py310-torch2.3.0-1.16.0-fc
-        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/pre/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_download.sh"]
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_download.sh"]
         port: 9001
       environmentVariables:
         DEPLOY_PLATFORM: fc
@@ -172,7 +172,7 @@ resources:
       nasConfig: ${resources.model_cache.output.nasConfig}
       customContainerConfig:
         image: registry.${vars.region}.aliyuncs.com/modelscope-repo/modelscope:${vars.version}
-        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/pre/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_deploy.sh"]
+        command: ["/bin/sh", "-c", "wget https://modelscope.oss-cn-beijing.aliyuncs.com/swingdeploy/deploy.tar; tar xvf deploy.tar; /bin/bash script/run_deploy.sh"]
         port: 9000
       environmentVariables:
         DEPLOY_PLATFORM: 'fc'
