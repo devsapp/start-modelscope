@@ -72,7 +72,7 @@ resources:
       timeout: 86400
       memorySize: 32768
       cpu: 8
-      diskSize: 10240
+      diskSize: 32768
       instanceType: e1
       instanceConcurrency: 1
       runtime: custom-container
