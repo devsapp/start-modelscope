@@ -156,6 +156,11 @@ Parameters:
       type: string
       default: ''
       description: nas所在专用网络的交换机id，nasMountAddr为空时不会被取用。
+    ossBucketPath:
+      title: oss挂载地址
+      type: string
+      default: ''
+      description: oss挂载地址，用于模型下载的缓存和转换；配置优先级大于nas。配置时nas不被挂载。oss所在区域应与region完全一致。配置示例：0625xxxxxx-xxxxx.cn-hangzhou.nas.aliyuncs.com:/deploy
     refresh:
       title: 刷新缓存
       type: string
