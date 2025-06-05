@@ -102,7 +102,7 @@ resources:
         ALIBABA_CLOUD_SECURITY_TOKEN: ''
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
-        MODELSCOPE_CACHE: {{ if }}${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}{{ else }}${resources.model_cache.output.ossMountConfig.ossMountPoints.0.mountDir}{{ /if }}
+        MODELSCOPE_CACHE: {{ if ossBucketPath != '' }}${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}{{ else }}${resources.model_cache.output.ossMountConfig.ossMountPoints.0.mountDir}{{ /if }}
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         MODELSCOPE_DOMAIN: ${vars.modelCache}
         IMAGE_TAG: ${vars.version}
@@ -203,7 +203,7 @@ resources:
         ALIBABA_CLOUD_SECURITY_TOKEN: ''
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
-        MODELSCOPE_CACHE: {{ if }}${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}{{ else }}${resources.model_cache.output.ossMountConfig.ossMountPoints.0.mountDir}{{ /if }}
+        MODELSCOPE_CACHE: {{ if ossBucketPath != '' }}${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}{{ else }}${resources.model_cache.output.ossMountConfig.ossMountPoints.0.mountDir}{{ /if }}
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         TASK: ${vars.modelTask}
         IMAGE_TAG: ${vars.version}
