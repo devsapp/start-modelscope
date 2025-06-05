@@ -28,7 +28,8 @@ vars: # 全局变量
   securityGroupId: {{ securityGroupId }}
   vSwitchIds: {{ vSwitchIds }}
   refresh: '{{ refresh }}'
-  ossBucketPath: {{ ossBucketPath }}
+  ossBucketName: {{ ossBucketName }}
+  ossBucketSubPath: {{ ossBucketSubPath }}
 resources:
   model_cache:
     component: 'fc3'
@@ -41,11 +42,11 @@ resources:
       instanceType: e1
       runtime: python3.9
       code: ./model_cache
-      {{ if ossBucketPath != '' }}ossMountConfig:
-        ossMountPoints:
-          - bucketName: swingdeploy-oss-${vars.region}
-            bucketPath: ${vars.ossBucketPath}
-            endpoint: oss-cn-${vars.region}.aliyuncs.com
+      {{ if ossBucketName != '' }}ossMountConfig:
+        mountPoints:
+          - bucketName: ${vars.ossBucketName}
+            bucketPath: ${vars.ossBucketSubPath}
+            endpoint: http://oss-cn-${vars.region}-internal.aliyuncs.com
             mountDir: /mnt/cache
             readOnly: False
       {{ else }}vpcConfig:{{ if nasMountAddr != '' }}
@@ -85,7 +86,13 @@ resources:
       instanceConcurrency: 1
       runtime: custom-container
       internetAccess: true
-      {{ if ossBucketPath != '' }}ossMountConfig: ${resources.model_cache.props.ossMountConfig}
+      {{ if ossBucketName != '' }}ossMountConfig:
+        mountPoints:
+          - bucketName: ${vars.ossBucketName}
+            bucketPath: ${vars.ossBucketSubPath}
+            endpoint: http://oss-cn-${vars.region}-internal.aliyuncs.com
+            mountDir: /mnt/cache
+            readOnly: False
       {{ else }}vpcConfig: ${resources.model_cache.output.vpcConfig}
       nasConfig: ${resources.model_cache.output.nasConfig}{{ /if }}
       customContainerConfig:
@@ -102,7 +109,7 @@ resources:
         ALIBABA_CLOUD_SECURITY_TOKEN: ''
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
-        MODELSCOPE_CACHE: {{ if ossBucketPath != '' }}${resources.model_cache.props.ossMountConfig.ossMountPoints.0.mountDir}{{ else }}${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}{{ /if }}
+        MODELSCOPE_CACHE: /mnt/cache
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         MODELSCOPE_DOMAIN: ${vars.modelCache}
         IMAGE_TAG: ${vars.version}
@@ -180,11 +187,11 @@ resources:
       initializer: 'true'
       initializationTimeout: 300
       internetAccess: true
-      {{ if ossBucketPath != '' }}ossMountConfig:
-        ossMountPoints:
-          - bucketName: swingdeploy-oss-${vars.region}
-            bucketPath: ${vars.ossBucketPath}
-            endpoint: oss-cn-${vars.region}.aliyuncs.com
+      {{ if ossBucketName != '' }}ossMountConfig:
+        mountPoints:
+          - bucketName: ${vars.ossBucketName}
+            bucketPath: ${vars.ossBucketSubPath}
+            endpoint: http://oss-cn-${vars.region}-internal.aliyuncs.com
             mountDir: /mnt/cache
             readOnly: False
       {{ else }}vpcConfig: ${resources.model_cache.output.vpcConfig}
@@ -203,7 +210,7 @@ resources:
         ALIBABA_CLOUD_SECURITY_TOKEN: ''
         MODEL_ID: ${vars.modelID}
         MODEL_VERSION: ${vars.modelRevision}
-        MODELSCOPE_CACHE: {{ if ossBucketPath != '' }}${resources.model_cache.props.ossMountConfig.ossMountPoints.0.mountDir}{{ else }}${resources.model_cache.output.nasConfig.mountPoints.0.mountDir}{{ /if }}
+        MODELSCOPE_CACHE: /mnt/cache
         MODELSCOPE_TOKEN: ${vars.modelAccessToken}
         TASK: ${vars.modelTask}
         IMAGE_TAG: ${vars.version}
