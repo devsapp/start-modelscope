@@ -46,7 +46,7 @@ resources:
         mountPoints:
           - bucketName: ${vars.ossBucketName}
             bucketPath: ${vars.ossBucketSubPath}
-            endpoint: http://oss-cn-${vars.region}-internal.aliyuncs.com
+            endpoint: http://oss-${vars.region}-internal.aliyuncs.com
             mountDir: /mnt/cache
             readOnly: False
       {{ else }}vpcConfig:{{ if nasMountAddr != '' }}
@@ -90,7 +90,7 @@ resources:
         mountPoints:
           - bucketName: ${vars.ossBucketName}
             bucketPath: ${vars.ossBucketSubPath}
-            endpoint: http://oss-cn-${vars.region}-internal.aliyuncs.com
+            endpoint: http://oss-${vars.region}-internal.aliyuncs.com
             mountDir: /mnt/cache
             readOnly: False
       {{ else }}vpcConfig: ${resources.model_cache.output.vpcConfig}
@@ -191,7 +191,7 @@ resources:
         mountPoints:
           - bucketName: ${vars.ossBucketName}
             bucketPath: ${vars.ossBucketSubPath}
-            endpoint: http://oss-cn-${vars.region}-internal.aliyuncs.com
+            endpoint: http://oss-${vars.region}-internal.aliyuncs.com
             mountDir: /mnt/cache
             readOnly: False
       {{ else }}vpcConfig: ${resources.model_cache.output.vpcConfig}
