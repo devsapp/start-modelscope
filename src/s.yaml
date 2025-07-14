@@ -82,6 +82,12 @@ resources:
       memorySize: 32768
       cpu: 8
       diskSize: 10240
+      logConfig:
+        logstore: default-logs
+        project: serverless-cn-hangzhou-b4df492a-00c7-501f-8d80-5ffd311d5273
+        enableRequestMetrics: True
+        enableInstanceMetrics: True
+        logBeginRule: DefaultRegex
       instanceType: c1
       instanceConcurrency: 1
       runtime: custom-container
