@@ -81,7 +81,7 @@ resources:
       timeout: 86400
       memorySize: 32768
       cpu: 8
-      diskSize: 10240
+      diskSize: 30720
       logConfig:
         logstore: default-logs
         project: serverless-cn-hangzhou-b4df492a-00c7-501f-8d80-5ffd311d5273
@@ -183,7 +183,7 @@ resources:
       timeout: 86400
       memorySize: ${vars.memorySize}
       cpu: {{ if instanceType == 'fc.gpu.tesla.1' }}4{{ else }}8{{ /if }}
-      diskSize: 10240
+      diskSize: 30720
       {{ if instanceType != 'c1' && instanceType != 'e1' }}gpuConfig:
         gpuMemorySize: ${vars.gpuMemorySize}
         gpuType: ${vars.instanceType}
