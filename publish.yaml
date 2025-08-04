@@ -174,3 +174,18 @@ Parameters:
       enum:
         - '1'
         - '0'
+    ollamaVersion:
+      title: ollama版本
+      type: string
+      default: ''
+      description: 指定required >= 特定的ollama库版本
+    vllmVersion:
+      title: vllm版本
+      type: string
+      default: ''
+      description: 指定required >= 特定的vllm库版本
+    lmdeployVersion:
+      title: lmdeploy版本
+      type: string
+      default: ''
+      description: 指定required >= 特定的lmdeploy库版本
