@@ -31,8 +31,6 @@ vars: # 全局变量
   ossBucketName: {{ ossBucketName }}
   ossBucketSubPath: {{ ossBucketSubPath }}
   ollamaVersion: {{ ollamaVersion }}
-  vllmVersion: {{ vllmVersion }}
-  lmdeployVersion: {{ lmdeployVersion }}
 resources:
   model_cache:
     component: 'fc3'
@@ -122,8 +120,8 @@ resources:
         SERVED_MODEL_NAME: ${vars.servedModelName}
         REFRESH: '${vars.refresh}'
         OLLAMA_VERSION: ${vars.ollamaVersion}
-        VLLM_VERSION: ${vars.vllmVersion}
-        LMDEPLOY_VERSION: ${vars.lmdeployVersion}
+        VLLM_VERSION: {{ vllmVersion }}
+        LMDEPLOY_VERSION: {{ lmdeployVersion }}
 
   model_meta_func:
     component: 'fc3'
@@ -227,8 +225,8 @@ resources:
         DEPLOY_ENV: '${vars.deployEnv}'
         REFRESH: '0'
         OLLAMA_VERSION: ${vars.ollamaVersion}
-        VLLM_VERSION: ${vars.vllmVersion}
-        LMDEPLOY_VERSION: ${vars.lmdeployVersion}
+        VLLM_VERSION: {{ vllmVersion }}
+        LMDEPLOY_VERSION: {{ lmdeployVersion }}
       triggers:
         - triggerName: httpTrigger
           triggerType: http
