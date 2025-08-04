@@ -30,7 +30,6 @@ vars: # 全局变量
   refresh: '{{ refresh }}'
   ossBucketName: {{ ossBucketName }}
   ossBucketSubPath: {{ ossBucketSubPath }}
-  ollamaVersion: {{ ollamaVersion }}
 resources:
   model_cache:
     component: 'fc3'
@@ -119,7 +118,7 @@ resources:
         MODEL_BACKEND: ${vars.modelBackend}
         SERVED_MODEL_NAME: ${vars.servedModelName}
         REFRESH: '${vars.refresh}'
-        OLLAMA_VERSION: ${vars.ollamaVersion}
+        OLLAMA_VERSION: {{ ollamaVersion }}
         VLLM_VERSION: {{ vllmVersion }}
         LMDEPLOY_VERSION: {{ lmdeployVersion }}
 
@@ -224,7 +223,7 @@ resources:
         MODEL_BACKEND: ${vars.modelBackend}
         DEPLOY_ENV: '${vars.deployEnv}'
         REFRESH: '0'
-        OLLAMA_VERSION: ${vars.ollamaVersion}
+        OLLAMA_VERSION: {{ ollamaVersion }}
         VLLM_VERSION: {{ vllmVersion }}
         LMDEPLOY_VERSION: {{ lmdeployVersion }}
       triggers:
